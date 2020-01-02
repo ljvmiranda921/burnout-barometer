@@ -15,6 +15,11 @@ type Message struct {
 	Text         string `json:"text"`
 }
 
+// Log is the user log for the barometer. This also serves as
+// the schema for the BigQuery table
+type Log struct {
+}
+
 // BurnoutBarometer takes a log message from a Slack slash command and stores
 // it into BigQuery as streaming insert.
 func BurnoutBarometer(w http.ResponseWriter, r *http.Request) {

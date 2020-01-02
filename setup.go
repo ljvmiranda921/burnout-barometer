@@ -9,6 +9,7 @@ import (
 
 type configuration struct {
 	ProjectID string `json:"PROJECT_ID"`
+	Table     string `json:"BQ_TABLE"`
 	Token     string `json:"SLACK_TOKEN"`
 }
 
