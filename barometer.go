@@ -1,4 +1,4 @@
-package function
+package barometer
 
 import (
 	"encoding/json"
@@ -104,17 +104,26 @@ func storeMessage(text, userID, date string) (*Message, error) {
 		return nil, err
 	}
 
+	ts, err := getTimestamp(date, config.Area)
+	if err != nil {
+		log.Fatalf("error in getTimestamp: %v", err)
+	}
+
+	measure, err := strconv.Atoi(l[0])
+	if err != nil {
+		log.Fatalf("error in strconv: %v", err)
+	}
+
 	logMsg := &Log{
-		Timestamp:  getTimestamp(date, config.Area),
+		Timestamp:  ts,
 		UserID:     userID,
-		LogMeasure: strconv.Atoi(l[0]),
+		LogMeasure: measure,
 		Notes:      l[1],
 	}
 
 	// TODO: Store message in BigQuery as a streaming insert
-	log.Printf(logMsg)
 
-	return FormatReply(logMsg), nil
+	return FormatReply(logMsg)
 }
 
 func parseLogMessage(m string) ([]string, error) {
@@ -128,12 +137,12 @@ func getTimestamp(t string, area string) (time.Time, error) {
 	i, err := strconv.ParseInt(t, 10, 64)
 	if err != nil {
 		log.Fatalf("cannot parse timestamp %s: %v", t, err)
-		return nil, err
+		return time.Time{}, err
 	}
 	loc, err := time.LoadLocation(config.Area)
 	if err != nil {
 		log.Fatalf("cannot find location: %s", area)
-		return nil, err
+		return time.Time{}, err
 	}
 
 	return time.Unix(i, 0).In(loc), nil
