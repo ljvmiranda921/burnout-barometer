@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"cloud.google.com/go/bigquery"
 )
 
 // Message is the Slack message event.
@@ -35,6 +37,16 @@ type Log struct {
 	UserID     string
 	LogMeasure int
 	Notes      string
+}
+
+// Save implements the ValueSaver interface
+func (i *Log) Save() (map[string]bigquery.Value, string, error) {
+	return map[string]bigquery.Value{
+		"timestamp":   i.Timestamp,
+		"user_id":     i.UserID,
+		"log_measure": i.LogMeasure,
+		"notes":       i.Notes,
+	}
 }
 
 // BurnoutBarometer takes a log message from a Slack slash command and stores
