@@ -49,6 +49,7 @@ func BurnoutBarometer(w http.ResponseWriter, r *http.Request) {
 		UserID:    r.Form["user_id"][0],
 		Timestamp: r.Header.Get("X-Slack-Request-Timestamp"),
 		Area:      config.Area,
+		BQTable:   config.Table,
 	}
 	resp, err := req.Process()
 	if err != nil {
@@ -148,6 +149,7 @@ func (r *Request) GetTimestamp() (time.Time, error) {
 func (r *Request) InsertToTable() error {
 	ctx := context.Background()
 	projectID, datasetID, tableID := r.splitBQPath(r.BQTable)
+	log.Printf("using BQ table: %s", r.BQTable)
 	client, err := bigquery.NewClient(ctx, projectID)
 	if err != nil {
 		return fmt.Errorf("error in bigquery.NewClient: %v", err)
@@ -160,10 +162,9 @@ func (r *Request) InsertToTable() error {
 		return err
 	}
 	return nil
-
 }
 
 func (r *Request) splitBQPath(p string) (string, string, string) {
-	s := strings.SplitN(p, ".", 3)
+	s := strings.Split(p, ".")
 	return s[0], s[1], s[2]
 }
