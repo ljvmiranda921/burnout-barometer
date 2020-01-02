@@ -1,4 +1,4 @@
-package main
+package function
 
 import (
 	"context"
@@ -13,6 +13,8 @@ type configuration struct {
 	Token     string `json:"SLACK_TOKEN"`
 	Area      string `json:"AREA"`
 }
+
+var config *configuration
 
 func setup(ctx context.Context) error {
 	if config == nil {
