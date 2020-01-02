@@ -1,6 +1,16 @@
 # burnout-barometer [![GoDoc](https://godoc.org/github.com/ljvmiranda921/burnout-barometer?status.svg)](https://godoc.org/github.com/ljvmiranda921/burnout-barometer)
 
-A Slack tool to log, track, and asses you or your team's stress and work-life
+A Slack tool to log, track, and asses you or your team's stress and work-life.
+
+## Usage
+
+To use within Slack, just type:
+
+```
+/barometer 0 "what a stressful day"
+/barometer 5 "today's really great!"
+/barometer [integer between 0 to 5] [optional string] 
+```
 
 ## Installation
 
@@ -11,11 +21,11 @@ Ideally in the future, we'd update this to accommodate more open platforms like
 OpenFaas, PostgresSQL, and more.
 
 **Lastly**, it assumes that you know how to create a Slack Application. Create
-a Slack App with a corresponding slash-command (we recommend using `/barometer`).
-You can find more information [here](https://api.slack.com/start).
+a Slack App with a corresponding slash-command (we recommend using
+`/barometer`), then take note of the API Token provided for you.  You can find
+more information [here](https://api.slack.com/start).
 
 ### Deploying the Cloud Function
-
 First, clone the repository:
 
 ```sh
