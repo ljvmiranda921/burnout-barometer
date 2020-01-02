@@ -13,6 +13,42 @@ import (
 	"cloud.google.com/go/bigquery"
 )
 
+// Log is the user log for the barometer. This also serves as
+// the schema for the BigQuery table.
+type Log struct {
+	Timestamp  time.Time
+	UserID     string
+	LogMeasure int
+	Notes      string
+}
+
+// Save implements the ValueSaver interface.
+func (i *Log) Save() (map[string]bigquery.Value, string, error) {
+	return map[string]bigquery.Value{
+		"timestamp":   i.Timestamp,
+		"user_id":     i.UserID,
+		"log_measure": i.LogMeasure,
+		"notes":       i.Notes,
+	}
+}
+
+// FormatReply prepares the Slack message as a response to a slash command.
+func (i *Log) FormatReply() (*Message, error) {
+	attach := Attachment{
+		Color: "#ef4631",
+		Title: "Burnout Barometer",
+		Text:  fmt.Sprintf("Acknowledged"),
+	}
+
+	message := &Message{
+		ResponseType: "ephemeral",
+		Text:         fmt.Sprintf("Received: %d (%s)", i.LogMeasure, i.Notes),
+		Attachments:  []Attachment{attach},
+	}
+
+	return message, nil
+}
+
 // Message is the Slack message event.
 // see https://api.slack.com/docs/message-formatting
 type Message struct {
@@ -28,25 +64,6 @@ type Attachment struct {
 	TitleLink string `json:"title_link"`
 	Text      string `json:"text"`
 	ImageURL  string `json:"image_url"`
-}
-
-// Log is the user log for the barometer. This also serves as
-// the schema for the BigQuery table
-type Log struct {
-	Timestamp  time.Time
-	UserID     string
-	LogMeasure int
-	Notes      string
-}
-
-// Save implements the ValueSaver interface
-func (i *Log) Save() (map[string]bigquery.Value, string, error) {
-	return map[string]bigquery.Value{
-		"timestamp":   i.Timestamp,
-		"user_id":     i.UserID,
-		"log_measure": i.LogMeasure,
-		"notes":       i.Notes,
-	}
 }
 
 // BurnoutBarometer takes a log message from a Slack slash command and stores
@@ -135,7 +152,7 @@ func storeMessage(text, userID, date string) (*Message, error) {
 
 	// TODO: Store message in BigQuery as a streaming insert
 
-	return FormatReply(logMsg)
+	return logMsg.FormatReply()
 }
 
 func parseLogMessage(m string) ([]string, error) {
