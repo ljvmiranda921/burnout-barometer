@@ -1,4 +1,4 @@
-# burnout-barometer
+# burnout-barometer [![GoDoc](https://godoc.org/github.com/ljvmiranda921/burnout-barometer?status.svg)](https://godoc.org/github.com/ljvmiranda921/burnout-barometer)
 
 A Slack tool to log, track, and asses you or your team's stress and work-life
 
@@ -10,24 +10,36 @@ Function](https://cloud.google.com/functions/) that stores results into
 Ideally in the future, we'd update this to accommodate more open platforms like
 OpenFaas, PostgresSQL, and more.
 
+**Lastly**, it assumes that you know how to create a Slack Application. Create
+a Slack App with a corresponding slash-command (we recommend using `/barometer`).
+You can find more information [here](https://api.slack.com/start).
 
 ### Deploying the Cloud Function
 
+First, clone the repository:
 
+```sh
+git clone git@github.com:ljvmiranda921/burnout-barometer.git
+```
 
+And then configure `config.json`: 
 
-### Creating the Slack App
+```json
+{
+    "PROJECT_ID": "<my-project>", 
+    "BQ_TABLE": "<my-project>.<my-dataset>.<my-table>", 
+    "SLACK_TOKEN": "<base64-encoded-token>",
+    "AREA": "<locale-for-datetime>"
+}
+```
 
-First, you need to create a Slack application in your workspace. Be sure to add
-a slash command and 
+Once complete, deploy the Cloud Function!
 
+```sh
+gcloud functions deploy BurnoutBarometer --runtime go111 --trigger-http
+```
 
-
-
-
-
-
-
-
-
+This command will provide you with the endpoint you'll use for Slack's
+slash-command. For more information, please refer to [this
+link](https://cloud.google.com/functions/docs/tutorials/slack).
 
