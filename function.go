@@ -1,6 +1,7 @@
 package barometer
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -9,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"cloud.google.com/go/bigquery"
 )
 
 // BurnoutBarometer takes a log message from a Slack slash command and stores
@@ -78,7 +81,8 @@ type Request struct {
 	UserID    string
 	Timestamp string
 	Area      string
-	LogMsg    Log
+	BQTable   string
+	Item      Log
 }
 
 // Process parses the request and stores to BigQuery.
@@ -92,23 +96,28 @@ func (r *Request) Process() (*Message, error) {
 	ts, err := r.GetTimestamp()
 	if err != nil {
 		log.Fatalf("error in getTimestamp: %v", err)
+		return nil, err
 	}
 
 	measure, err := strconv.Atoi(m)
 	if err != nil {
 		log.Fatalf("error in strconv: %v", err)
+		return nil, err
 	}
 
-	r.LogMsg = Log{
+	r.Item = Log{
 		Timestamp:  ts,
 		UserID:     r.UserID,
 		LogMeasure: measure,
 		Notes:      notes,
 	}
 
-	// TODO: Store message in BigQuery as a streaming insert
+	if err := r.InsertToTable(); err != nil {
+		log.Fatalf("error in InsertToTable: %v", err)
+		return nil, err
+	}
 
-	return r.LogMsg.FormatReply()
+	return r.Item.FormatReply()
 }
 
 // ParseMessage extracts the barometer measure and notes from the form text.
@@ -133,4 +142,28 @@ func (r *Request) GetTimestamp() (time.Time, error) {
 	}
 
 	return time.Unix(i, 0).In(loc), nil
+}
+
+// InsertToTable adds the Item entry into the specified Bigquery table.
+func (r *Request) InsertToTable() error {
+	ctx := context.Background()
+	projectID, datasetID, tableID := r.splitBQPath(r.BQTable)
+	client, err := bigquery.NewClient(ctx, projectID)
+	if err != nil {
+		return fmt.Errorf("error in bigquery.NewClient: %v", err)
+	}
+
+	inserter := client.Dataset(datasetID).Table(tableID).Inserter()
+	items := []*Log{&r.Item}
+
+	if err := inserter.Put(ctx, items); err != nil {
+		return err
+	}
+	return nil
+
+}
+
+func (r *Request) splitBQPath(p string) (string, string, string) {
+	s := strings.SplitN(p, ".", 3)
+	return s[0], s[1], s[2]
 }
