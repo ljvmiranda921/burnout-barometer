@@ -1,4 +1,4 @@
-package barometer
+package main
 
 import (
 	"fmt"

@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"cloud.google.com/go/bigquery"
+	log "github.com/sirupsen/logrus"
 )
 
 // Request defines the common form parameters when a slash command is invoked.

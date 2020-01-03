@@ -8,8 +8,9 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
-	"log"
 	"os"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // Configuration contains all important settings for running the command
