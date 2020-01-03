@@ -6,6 +6,7 @@ package cmd
 
 import (
 	"github.com/julienschmidt/httprouter"
+	"github.com/ljvmiranda921/burnout-barometer/pkg"
 	"github.com/spf13/cobra"
 )
 
@@ -16,8 +17,8 @@ func ServeCommand() *cobra.Command {
 
 	var command = &cobra.Command{
 		Use:     "serve",
-		Short:   "Start the Burnout Barometer Server",
-		Example: "serve --port=8080",
+		Short:   "Start the burnout-barometer server",
+		Example: "barometer serve --port=8080",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			initLogger(verbosity)
 
