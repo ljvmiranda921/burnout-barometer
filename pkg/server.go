@@ -63,11 +63,13 @@ func (s *Server) handleLog() http.HandlerFunc {
 
 		// Check if authentication token is correct
 		if err := s.verifyWebHook(r.Form, config.Token); err != nil {
+			http.Error(w, "webhook may be empty, missing, or unauthorized", 400)
 			log.WithFields(log.Fields{"err": err}).Fatal("verifyWebHook")
 		}
 
 		// Check if text exists
 		if len(r.Form["text"]) == 0 {
+			http.Error(w, "empty text in form", 400)
 			log.Fatal("empty text in form")
 		}
 
@@ -82,6 +84,7 @@ func (s *Server) handleLog() http.HandlerFunc {
 
 		resp, err := req.Process()
 		if err != nil {
+			http.Error(w, "error in processing request", 400)
 			log.WithFields(log.Fields{"err": err}).Fatal("Request.Process")
 		}
 
