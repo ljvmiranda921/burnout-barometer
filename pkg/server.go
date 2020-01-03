@@ -56,6 +56,11 @@ func (s *Server) handleLog() http.HandlerFunc {
 			log.WithFields(log.Fields{"err": err}).Fatal("NewConfiguration")
 		}
 
+		if err := r.ParseForm(); err != nil {
+			http.Error(w, "couldn't parse form", 400)
+			log.WithFields(log.Fields{"err": err}).Fatal("http.Request.ParseForm")
+		}
+
 		// Check if authentication token is correct
 		if err := s.verifyWebHook(r.Form, config.Token); err != nil {
 			log.WithFields(log.Fields{"err": err}).Fatal("verifyWebHook")
