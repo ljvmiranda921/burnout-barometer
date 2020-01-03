@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/julienschmidt/httprouter"
 	log "github.com/sirupsen/logrus"
@@ -26,8 +27,8 @@ func (s *Server) Routes() {
 	s.Router.HandlerFunc(http.MethodGet, "/", s.handleIndex())
 }
 
-// Start command starts a server on the specific port. This will always return
-// a nil error.
+// Start command starts a server on the specific port. It will also attempt
+// to read the configuration file.
 func (s *Server) Start() error {
 	log.Infof("listening to port %d", s.Port)
 	http.ListenAndServe(fmt.Sprintf(":%d", s.Port), s.Router)
@@ -71,11 +72,24 @@ func (s *Server) handleLog() http.HandlerFunc {
 
 		resp, err := req.Process()
 		if err != nil {
-			log.WithFields(log.Fields{"err": err}).Fatal("req.Process()")
+			log.WithFields(log.Fields{"err": err}).Fatal("Request.Process")
 		}
 
 		// Send reply back to Slack
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(resp)
 	}
+}
+
+func verifyWebHook(form url.Values) error {
+	t := form.Get("token")
+	if len(t) == 0 {
+		return fmt.Errorf("empty form token")
+	}
+
+	if t != config.Token {
+		return fmt.Errorf("invalid request/credentials: %q", t[0])
+	}
+
+	return nil
 }
