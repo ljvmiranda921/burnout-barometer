@@ -1,80 +1,18 @@
-package barometer
+// Copyright 2019 Lester James V. Miranda. All rights reserved.
+// Licensed under the MIT License. See LICENSE in the project root
+// for license information.
+
+package pkg
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"log"
-	"net/http"
-	"net/url"
 	"strconv"
 	"strings"
 	"time"
 
 	"cloud.google.com/go/bigquery"
 )
-
-// BurnoutBarometer takes a log message from a Slack slash command and stores
-// it into BigQuery as a streaming insert.
-func BurnoutBarometer(w http.ResponseWriter, r *http.Request) {
-
-	log.Printf("request received")
-
-	// Setup application variables
-	if err := setup(r.Context()); err != nil {
-		log.Fatalf("setup: %v", err)
-	}
-
-	// Validate request and parse the submitted form
-	if r.Method != "POST" {
-		http.Error(w, "only POST requests are accepted", 405)
-	}
-
-	if err := r.ParseForm(); err != nil {
-		http.Error(w, "Couldn't parse form", 400)
-		log.Fatalf("error in ParseForm: %v", err)
-	}
-
-	if err := verifyWebHook(r.Form); err != nil {
-		log.Fatalf("error in verifyWebHook: %v", err)
-	}
-
-	if len(r.Form["text"]) == 0 {
-		log.Fatalf("empty text in form")
-	}
-
-	// Store the message and timestamp to BigQuery
-	req := &Request{
-		Text:      r.Form["text"][0],
-		UserID:    r.Form["user_id"][0],
-		Timestamp: r.Header.Get("X-Slack-Request-Timestamp"),
-		Area:      config.Area,
-		BQTable:   config.Table,
-	}
-	resp, err := req.Process()
-	if err != nil {
-		log.Fatalf("error in storeMessage: %v", err)
-	}
-
-	// Send reply back to Slack
-	w.Header().Set("Content-Type", "application/json")
-	if err = json.NewEncoder(w).Encode(resp); err != nil {
-		log.Fatalf("error in json.Marshal: %v", err)
-	}
-}
-
-func verifyWebHook(form url.Values) error {
-	t := form.Get("token")
-	if len(t) == 0 {
-		return fmt.Errorf("empty form token")
-	}
-
-	if t != config.Token {
-		return fmt.Errorf("invalid request/credentials: %q", t[0])
-	}
-
-	return nil
-}
 
 // Request defines the common form parameters when a slash command is invoked.
 type Request struct {
@@ -90,19 +28,19 @@ type Request struct {
 func (r *Request) Process() (*Message, error) {
 	m, notes, err := r.ParseMessage()
 	if err != nil {
-		log.Fatalf("error in parseLogMessage: %v", err)
+		log.WithFields(log.Fields{"err": err}).Fatal("Request.ParseMessage")
 		return nil, err
 	}
 
 	ts, err := r.GetTimestamp()
 	if err != nil {
-		log.Fatalf("error in getTimestamp: %v", err)
+		log.WithFields(log.Fields{"err": err}).Fatal("Request.GetTimestamp")
 		return nil, err
 	}
 
 	measure, err := strconv.Atoi(m)
 	if err != nil {
-		log.Fatalf("error in strconv: %v", err)
+		log.WithFields(log.Fields{"err": err}).Fatal("strconv")
 		return nil, err
 	}
 
@@ -167,4 +105,57 @@ func (r *Request) InsertToTable() error {
 func (r *Request) splitBQPath(p string) (string, string, string) {
 	s := strings.Split(p, ".")
 	return s[0], s[1], s[2]
+}
+
+// Log is the user log for the barometer. This also serves as
+// the schema for the BigQuery table.
+type Log struct {
+	Timestamp  time.Time
+	UserID     string
+	LogMeasure int
+	Notes      string
+}
+
+// Save implements the ValueSaver interface.
+func (i *Log) Save() (map[string]bigquery.Value, string, error) {
+	return map[string]bigquery.Value{
+		"timestamp":   i.Timestamp,
+		"user_id":     i.UserID,
+		"log_measure": i.LogMeasure,
+		"notes":       i.Notes,
+	}, "", nil
+}
+
+// FormatReply prepares the Slack message as a response to a slash command.
+func (i *Log) FormatReply() (*Message, error) {
+	attach := Attachment{
+		Color: "#ef4631",
+		Title: "Burnout Barometer",
+		Text:  fmt.Sprintf("Acknowledged"),
+	}
+
+	message := &Message{
+		ResponseType: "ephemeral",
+		Text:         fmt.Sprintf("Received: %d (%s)", i.LogMeasure, i.Notes),
+		Attachments:  []Attachment{attach},
+	}
+
+	return message, nil
+}
+
+// Message is the Slack message event.
+// see https://api.slack.com/docs/message-formatting
+type Message struct {
+	ResponseType string       `json:"response_type"`
+	Text         string       `json:"text"`
+	Attachments  []Attachment `json:"attachments"`
+}
+
+// Attachment defines the message output after running the slash command
+type Attachment struct {
+	Color     string `json:"color"`
+	Title     string `json:"title"`
+	TitleLink string `json:"title_link"`
+	Text      string `json:"text"`
+	ImageURL  string `json:"image_url"`
 }
