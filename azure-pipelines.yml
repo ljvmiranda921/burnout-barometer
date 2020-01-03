@@ -37,5 +37,6 @@ steps:
     GOOS=darwin GOARCH=amd64 go build -v -o build/burnout-barometer-amd64-darwin .
     GOOS=windows GOARCH=amd64 go build -v -o build/burnout-barometer-amd64-windows.exe .
     GOOS=linux GOARCH=amd64 go build -v -o build/burnout-barometer-amd64-linux .
+    ls build/
   workingDirectory: '$(modulePath)'
   displayName: 'Get dependencies, then build'
