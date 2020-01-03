@@ -20,8 +20,10 @@ func BurnoutBarometerFn(w http.ResponseWriter, r *http.Request) {
 	log.Info("request received")
 
 	// Setup application variables
-	var config pkg.Configuration
-	config.Setup(r.Context())
+	config, err := pkg.NewConfiguration(r.Context(), "config.json")
+	if err != nil {
+		log.WithFields(log.Fields{"err": err}).Fatal("NewConfiguration")
+	}
 
 	// Validate request and parse the submitted form
 	if r.Method != "POST" {
@@ -33,7 +35,12 @@ func BurnoutBarometerFn(w http.ResponseWriter, r *http.Request) {
 		log.WithFields(log.Fields{"err": err}).Fatal("http.Request.ParseForm")
 	}
 
-	if err := verifyWebHook(&config, r.Form); err != nil {
+	log.Infof("project-id: %s", config.ProjectID)
+	log.Infof("table: %s", config.Table)
+	log.Infof("area: %s", config.Area)
+	log.Infof("token: %s", config.Token)
+
+	if err := verifyWebHook(r.Form, config.Token); err != nil {
 		log.WithFields(log.Fields{"err": err}).Fatal("verifyWebHook")
 	}
 
@@ -62,14 +69,14 @@ func BurnoutBarometerFn(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func verifyWebHook(config *pkg.Configuration, form url.Values) error {
+func verifyWebHook(form url.Values, token string) error {
 	t := form.Get("token")
 	if len(t) == 0 {
 		return fmt.Errorf("empty form token")
 	}
 
-	if t != config.Token {
-		return fmt.Errorf("invalid request/credentials: %q", t[0])
+	if t != token {
+		return fmt.Errorf("invalid request/credentials: %q", t)
 	}
 
 	return nil
