@@ -35,11 +35,6 @@ func BurnoutBarometerFn(w http.ResponseWriter, r *http.Request) {
 		log.WithFields(log.Fields{"err": err}).Fatal("http.Request.ParseForm")
 	}
 
-	log.Infof("project-id: %s", config.ProjectID)
-	log.Infof("table: %s", config.Table)
-	log.Infof("area: %s", config.Area)
-	log.Infof("token: %s", config.Token)
-
 	if err := verifyWebHook(r.Form, config.Token); err != nil {
 		log.WithFields(log.Fields{"err": err}).Fatal("verifyWebHook")
 	}
@@ -76,7 +71,7 @@ func verifyWebHook(form url.Values, token string) error {
 	}
 
 	if t != token {
-		return fmt.Errorf("invalid request/credentials: %q", t)
+		return fmt.Errorf("invalid request/credentials")
 	}
 
 	return nil
