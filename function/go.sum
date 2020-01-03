@@ -56,8 +56,8 @@ github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxv
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
-github.com/ljvmiranda921/burnout-barometer v0.0.0-20200103102234-34a3a0bf350f h1:R4T2loW8gAmd8wxYiicVGvslbmLTHtv96L5RY48hIvw=
-github.com/ljvmiranda921/burnout-barometer v0.0.0-20200103102234-34a3a0bf350f/go.mod h1:e63yhywtVskIK4y0j4LgsSpAvifk9LCseKEP8EI1ujU=
+github.com/ljvmiranda921/burnout-barometer v0.0.0-20200103113348-80400f2eccc2 h1:6zvW0AJh4WiCl3iuB+Sl4zqNaN0II/+ixr2oOhv5wos=
+github.com/ljvmiranda921/burnout-barometer v0.0.0-20200103113348-80400f2eccc2/go.mod h1:e63yhywtVskIK4y0j4LgsSpAvifk9LCseKEP8EI1ujU=
 github.com/magiconair/properties v1.8.0/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
 github.com/mitchellh/go-homedir v1.1.0/go.mod h1:SfyaCUpYCn1Vlf4IUYiD9fPX4A5wJrkLzIz1N1q0pr0=
 github.com/mitchellh/mapstructure v1.1.2/go.mod h1:FVVH3fgwuzCH5S8UJGiWEs2h04kUh9fWfEaFds41c1Y=
