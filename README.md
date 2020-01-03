@@ -53,3 +53,10 @@ This command will provide you with the endpoint you'll use for Slack's
 slash-command. For more information, please refer to [this
 link](https://cloud.google.com/functions/docs/tutorials/slack).
 
+## New Deployment Instructions
+
+```
+burnout-barometer init
+burnout-barometer deploy
+burnout-barometer serve
+```
