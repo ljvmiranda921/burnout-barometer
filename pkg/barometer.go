@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root
 // for license information.
 
+// Package pkg contains types and methods for interacting with the barometer.
 package pkg
 
 import (
@@ -145,14 +146,14 @@ func (i *Log) FormatReply() (*Message, error) {
 }
 
 // Message is the Slack message event.
-// see https://api.slack.com/docs/message-formatting
+// see https://api.slack.com/docs/message-formatting for more information.
 type Message struct {
 	ResponseType string       `json:"response_type"`
 	Text         string       `json:"text"`
 	Attachments  []Attachment `json:"attachments"`
 }
 
-// Attachment defines the message output after running the slash command
+// Attachment defines the message output after running the slash command.
 type Attachment struct {
 	Color     string `json:"color"`
 	Title     string `json:"title"`

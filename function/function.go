@@ -2,6 +2,8 @@
 // Licensed under the MIT License. See LICENSE in the project root
 // for license information.
 
+// Package function contains a single function that can be deployed as a
+// serverless microservice.
 package function
 
 import (

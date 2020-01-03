@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root
 // for license information.
 
-// Package cmd contains all commands in the burnout-barometer CLI
+// Package cmd contains all commands in the burnout-barometer CLI.
 package cmd
 
 import (

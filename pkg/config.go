@@ -13,7 +13,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// Configuration contains all important settings for running the command
+// Configuration contains all important settings for running the command.
 type Configuration struct {
 	ProjectID string `json:"PROJECT_ID"`
 	Table     string `json:"BQ_TABLE"`
@@ -22,7 +22,7 @@ type Configuration struct {
 }
 
 // NewConfiguration reads the configuration file and returns an instance
-// of a Configuration
+// of a Configuration.
 func NewConfiguration(ctx context.Context, cfgPath string) (*Configuration, error) {
 
 	// Open configuration file
