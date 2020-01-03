@@ -18,7 +18,6 @@ import (
 type Server struct {
 	Port   int
 	Router *httprouter.Router
-	config Configuration
 }
 
 // Routes contain all handler functions that responds to GET or POST requests.
@@ -52,10 +51,13 @@ func (s *Server) handleLog() http.HandlerFunc {
 		log.WithFields(log.Fields{"path": "/log"}).Trace("received request")
 
 		// Setup the configuration file
-		s.config.Setup(r.Context())
+		config, err := NewConfiguration(r.Context(), "config.json")
+		if err != nil {
+			log.WithFields(log.Fields{"err": err}).Fatal("NewConfiguration")
+		}
 
 		// Check if authentication token is correct
-		if err := s.verifyWebHook(r.Form); err != nil {
+		if err := s.verifyWebHook(r.Form, config.Token); err != nil {
 			log.WithFields(log.Fields{"err": err}).Fatal("verifyWebHook")
 		}
 
@@ -69,8 +71,8 @@ func (s *Server) handleLog() http.HandlerFunc {
 			Text:      r.Form["text"][0],
 			UserID:    r.Form["user_id"][0],
 			Timestamp: r.Header.Get("X-Slack-Request-Timestamp"),
-			Area:      s.config.Area,
-			BQTable:   s.config.Table,
+			Area:      config.Area,
+			BQTable:   config.Table,
 		}
 
 		resp, err := req.Process()
@@ -84,13 +86,13 @@ func (s *Server) handleLog() http.HandlerFunc {
 	}
 }
 
-func (s *Server) verifyWebHook(form url.Values) error {
+func (s *Server) verifyWebHook(form url.Values, token string) error {
 	t := form.Get("token")
 	if len(t) == 0 {
 		return fmt.Errorf("empty form token")
 	}
 
-	if t != s.config.Token {
+	if t != token {
 		return fmt.Errorf("invalid request/credentials: %q", t[0])
 	}
 

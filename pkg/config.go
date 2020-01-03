@@ -21,29 +21,32 @@ type Configuration struct {
 	Area      string `json:"AREA"`
 }
 
-// Setup reads the configuration file and updates the parameters accordingly
-func (c *Configuration) Setup(ctx context.Context) error {
-	if c == nil {
-		cfgFile, err := os.Open("config.json")
-		if err != nil {
-			log.WithFields(log.Fields{"err": err}).Fatal("os.Open")
-			return err
-		}
+// NewConfiguration reads the configuration file and returns an instance
+// of a Configuration
+func NewConfiguration(ctx context.Context, cfgPath string) (*Configuration, error) {
 
-		d := json.NewDecoder(cfgFile)
-		if err = d.Decode(c); err != nil {
-			log.WithFields(log.Fields{"err": err}).Fatal("json.NewDecoder.Decode")
-			return err
-		}
-
-		// Decode `SLACK_TOKEN`
-		slackToken, err := base64.StdEncoding.DecodeString(c.Token)
-		if err != nil {
-			log.WithFields(log.Fields{"err": err}).Fatal("base64.StdEncoding.DecodeString")
-			return err
-		}
-		c.Token = string(slackToken)
+	// Open configuration file
+	cfgFile, err := os.Open(cfgPath)
+	if err != nil {
+		log.WithFields(log.Fields{"err": err}).Fatal("os.Open")
+		return nil, err
 	}
 
-	return nil
+	// Create a decoder from the file
+	d := json.NewDecoder(cfgFile)
+	config := &Configuration{}
+	if err = d.Decode(config); err != nil {
+		log.WithFields(log.Fields{"err": err}).Fatal("json.NewDecoder.Decode")
+		return nil, err
+	}
+
+	// Decode `SLACK_TOKEN`
+	slackToken, err := base64.StdEncoding.DecodeString(config.Token)
+	if err != nil {
+		log.WithFields(log.Fields{"err": err}).Fatal("base64.StdEncoding.DecodeString")
+		return nil, err
+	}
+	config.Token = string(slackToken)
+
+	return config, nil
 }
