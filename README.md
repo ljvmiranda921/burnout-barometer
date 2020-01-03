@@ -1,4 +1,5 @@
-# burnout-barometer [![GoDoc](https://godoc.org/github.com/ljvmiranda921/burnout-barometer?status.svg)](https://godoc.org/github.com/ljvmiranda921/burnout-barometer)
+# burnout-barometer [![Build Status](https://dev.azure.com/ljvmiranda/ljvmiranda/_apis/build/status/ljvmiranda921.burnout-barometer?branchName=master)](https://dev.azure.com/ljvmiranda/ljvmiranda/_build/latest?definitionId=6&branchName=master) [![GoDoc](https://godoc.org/github.com/ljvmiranda921/burnout-barometer?status.svg)](https://godoc.org/github.com/ljvmiranda921/burnout-barometer)
+
 
 A Slack tool to log, track, and asses you or your team's stress and work-life.
 
