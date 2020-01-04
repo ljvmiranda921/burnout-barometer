@@ -12,23 +12,21 @@ server by running:
 barometer init
 ```
 
-This will trigger a set of prompts to configure the server. You can then start
-it by typing:
+This will trigger a set of prompts to configure the server. Start the server by typing:
 
 ```sh
 barometer serve
 ```
 
-Burnout Barometer is also packaged as a Docker image. You can start the server
-by running the following command:
+Burnout Barometer is also packaged as a Docker image. Execute the following command:
 
 ```sh
 docker run ljvmiranda921/burnout-barometer:latest 
 ```
 
-You can then deploy this however you want. We highly-recommend using
-Functions-as-a-Service (FaaS) platforms like Google Cloud Functions, Cloud Run,
-AWS Lambda, OpenFaas, etc. 
+You can then deploy Burnout Barometer however you want. We highly-recommend
+using Functions-as-a-Service (FaaS) platforms like Google Cloud Functions,
+Cloud Run, AWS Lambda, OpenFaas, etc. 
 
 ## Deploying to Google Cloud Functions
 
