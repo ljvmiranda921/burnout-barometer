@@ -21,6 +21,21 @@ type Configuration struct {
 	Area      string `json:"AREA"`
 }
 
+// WriteConfiguration creates a configuration file at a given output path.
+func WriteConfiguration(cfg *Configuration, outputPath string) error {
+
+	file, _ := os.OpenFile(outputPath, os.O_CREATE, os.ModePerm)
+	defer file.Close()
+
+	e := json.NewEncoder(file)
+	if err := e.Encode(cfg); err != nil {
+		log.WithFields(log.Fields{"err": err}).Fatal("json.NewEncoder.Encode")
+		return err
+	}
+
+	return nil
+}
+
 // NewConfiguration reads the configuration file and returns an instance
 // of a Configuration.
 func NewConfiguration(ctx context.Context, cfgPath string) (*Configuration, error) {
