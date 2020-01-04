@@ -13,18 +13,22 @@ import (
 // ServeCommand starts the server that handles request coming from Slack.
 func ServeCommand() *cobra.Command {
 
-	var port int
+	var (
+		port    int
+		cfgPath string
+	)
 
 	var command = &cobra.Command{
 		Use:     "serve",
 		Short:   "Start the burnout-barometer server",
-		Example: "barometer serve --port=8080",
+		Example: "burnout-barometer serve --port=8080",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			initLogger(verbosity)
 
 			server := pkg.Server{
-				Port:   port,
-				Router: httprouter.New(),
+				Port:    port,
+				Router:  httprouter.New(),
+				CfgPath: cfgPath,
 			}
 
 			server.Routes()
@@ -35,5 +39,6 @@ func ServeCommand() *cobra.Command {
 
 	// Add flags
 	command.Flags().IntVarP(&port, "port", "p", 8080, "Port to run the server on")
+	command.Flags().StringVarP(&cfgPath, "config", "c", "config.json", "Path to configuration file")
 	return command
 }
