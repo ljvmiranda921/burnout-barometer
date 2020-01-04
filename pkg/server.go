@@ -60,19 +60,19 @@ func (s *Server) handleLog() http.HandlerFunc {
 
 		if err := r.ParseForm(); err != nil {
 			http.Error(w, "couldn't parse form", 400)
-			log.WithFields(log.Fields{"err": err}).Fatal("http.Request.ParseForm")
+			log.WithFields(log.Fields{"err": err}).Error("http.Request.ParseForm")
 		}
 
 		// Check if authentication token is correct
 		if err := s.verifyWebHook(r.Form, config.Token); err != nil {
 			http.Error(w, "webhook may be empty, missing, or unauthorized", 400)
-			log.WithFields(log.Fields{"err": err}).Fatal("verifyWebHook")
+			log.WithFields(log.Fields{"err": err}).Error("verifyWebHook")
 		}
 
 		// Check if text exists
 		if len(r.Form["text"]) == 0 {
 			http.Error(w, "empty text in form", 400)
-			log.Fatal("empty text in form")
+			log.Error("empty text in form")
 		}
 
 		// Process the request
@@ -87,7 +87,7 @@ func (s *Server) handleLog() http.HandlerFunc {
 		resp, err := req.Process()
 		if err != nil {
 			http.Error(w, "error in processing request", 400)
-			log.WithFields(log.Fields{"err": err}).Fatal("Request.Process")
+			log.WithFields(log.Fields{"err": err}).Error("Request.Process")
 		}
 
 		// Send reply back to Slack

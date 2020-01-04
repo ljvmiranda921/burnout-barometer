@@ -30,19 +30,19 @@ type Request struct {
 func (r *Request) Process() (*Message, error) {
 	m, notes, err := r.ParseMessage()
 	if err != nil {
-		log.WithFields(log.Fields{"err": err}).Fatal("Request.ParseMessage")
+		log.WithFields(log.Fields{"err": err}).Error("Request.ParseMessage")
 		return nil, err
 	}
 
 	ts, err := r.GetTimestamp()
 	if err != nil {
-		log.WithFields(log.Fields{"err": err}).Fatal("Request.GetTimestamp")
+		log.WithFields(log.Fields{"err": err}).Error("Request.GetTimestamp")
 		return nil, err
 	}
 
 	measure, err := strconv.Atoi(m)
 	if err != nil {
-		log.WithFields(log.Fields{"err": err}).Fatal("strconv")
+		log.WithFields(log.Fields{"err": err}).Error("strconv")
 		return nil, err
 	}
 
@@ -54,7 +54,7 @@ func (r *Request) Process() (*Message, error) {
 	}
 
 	if err := r.InsertToTable(); err != nil {
-		log.Fatalf("error in InsertToTable: %v", err)
+		log.WithFields(log.Fields{"err": err}).Error("Request.InsertToTable")
 		return nil, err
 	}
 
@@ -73,12 +73,12 @@ func (r *Request) ParseMessage() (string, string, error) {
 func (r *Request) GetTimestamp() (time.Time, error) {
 	i, err := strconv.ParseInt(r.Timestamp, 10, 64)
 	if err != nil {
-		log.Fatalf("cannot parse timestamp %s: %v", r.Timestamp, err)
+		log.Errorf("cannot parse timestamp %s: %v", r.Timestamp, err)
 		return time.Time{}, err
 	}
 	loc, err := time.LoadLocation(r.Area)
 	if err != nil {
-		log.Fatalf("cannot find location: %s", r.Area)
+		log.Errorf("cannot find location: %s", r.Area)
 		return time.Time{}, err
 	}
 
