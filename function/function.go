@@ -8,9 +8,7 @@ package function
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"net/url"
 
 	"github.com/ljvmiranda921/burnout-barometer/pkg"
 	log "github.com/sirupsen/logrus"
@@ -22,9 +20,9 @@ func BurnoutBarometerFn(w http.ResponseWriter, r *http.Request) {
 	log.Info("request received")
 
 	// Setup application variables
-	config, err := pkg.NewConfiguration(r.Context(), "config.json")
+	config, err := pkg.ReadConfiguration(r.Context(), "config.json")
 	if err != nil {
-		log.WithFields(log.Fields{"err": err}).Fatal("NewConfiguration")
+		log.WithFields(log.Fields{"err": err}).Fatal("ReadConfiguration")
 	}
 
 	// Validate request and parse the submitted form
@@ -37,7 +35,7 @@ func BurnoutBarometerFn(w http.ResponseWriter, r *http.Request) {
 		log.WithFields(log.Fields{"err": err}).Fatal("http.Request.ParseForm")
 	}
 
-	if err := verifyWebHook(r.Form, config.Token); err != nil {
+	if err := pkg.VerifyWebhook(r.Form, config.Token); err != nil {
 		log.WithFields(log.Fields{"err": err}).Fatal("verifyWebHook")
 	}
 
@@ -64,17 +62,4 @@ func BurnoutBarometerFn(w http.ResponseWriter, r *http.Request) {
 	if err = json.NewEncoder(w).Encode(resp); err != nil {
 		log.Fatalf("error in json.Marshal: %v", err)
 	}
-}
-
-func verifyWebHook(form url.Values, token string) error {
-	t := form.Get("token")
-	if len(t) == 0 {
-		return fmt.Errorf("empty form token")
-	}
-
-	if t != token {
-		return fmt.Errorf("invalid request/credentials")
-	}
-
-	return nil
 }

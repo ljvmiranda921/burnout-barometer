@@ -62,9 +62,9 @@ func (s *Server) handleLog() http.HandlerFunc {
 		}
 
 		// Check if authentication token is correct
-		if err := s.verifyWebHook(r.Form, config.Token); err != nil {
+		if err := VerifyWebhook(r.Form, s.Config.Token); err != nil {
 			http.Error(w, "webhook may be empty, missing, or unauthorized", 400)
-			log.WithFields(log.Fields{"err": err}).Error("verifyWebHook")
+			log.WithFields(log.Fields{"err": err}).Error("VerifyWebhook")
 		}
 
 		// Check if text exists
@@ -94,7 +94,8 @@ func (s *Server) handleLog() http.HandlerFunc {
 	}
 }
 
-func (s *Server) verifyWebHook(form url.Values, token string) error {
+// VerifyWebhook checks if the submitted request matches the token provided by Slack
+func VerifyWebhook(form url.Values, token string) error {
 	t := form.Get("token")
 	if len(t) == 0 {
 		return fmt.Errorf("empty form token")
