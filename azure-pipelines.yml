@@ -45,12 +45,13 @@ steps:
 
 - script: |
     go version
-    go get -v -t -d ./...
+    GOOS=$(os.platform) go get -v -t -d ./...
   workingDirectory: '$(modulePath)'
   displayName: 'Get dependencies'
 
 - script: |
-    GOOS=$(os.platform) GOARCH=amd64 go build -v -o build/barometer-amd64-$(os.platform) .
+    [ $(os.platform) == "windows" ] && export EXT=".exe"
+    GOOS=$(os.platform) GOARCH=amd64 go build -v -o build/barometer-amd64-$(os.platform)$(EXT) .
   workingDirectory: '$(modulePath)'
   displayName: 'Build executable'
 
