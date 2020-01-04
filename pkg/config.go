@@ -5,7 +5,6 @@
 package pkg
 
 import (
-	"context"
 	"encoding/base64"
 	"encoding/json"
 	"os"
@@ -36,9 +35,9 @@ func WriteConfiguration(cfg *Configuration, outputPath string) error {
 	return nil
 }
 
-// NewConfiguration reads the configuration file and returns an instance
+// ReadConfiguration reads the configuration file and returns an instance
 // of a Configuration.
-func NewConfiguration(ctx context.Context, cfgPath string) (*Configuration, error) {
+func ReadConfiguration(cfgPath string) (*Configuration, error) {
 
 	// Open configuration file
 	cfgFile, err := os.Open(cfgPath)

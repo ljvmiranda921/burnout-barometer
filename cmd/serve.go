@@ -5,6 +5,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/julienschmidt/httprouter"
 	"github.com/ljvmiranda921/burnout-barometer/pkg"
 	"github.com/spf13/cobra"
@@ -25,10 +27,16 @@ func ServeCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			initLogger(verbosity)
 
+			config, err := pkg.ReadConfiguration(cfgPath)
+			if err != nil {
+				fmt.Println("error reading configuration: %s", err)
+				return err
+			}
+
 			server := pkg.Server{
-				Port:    port,
-				Router:  httprouter.New(),
-				CfgPath: cfgPath,
+				Port:   port,
+				Router: httprouter.New(),
+				Config: config,
 			}
 
 			server.Routes()

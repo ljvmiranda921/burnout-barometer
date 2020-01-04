@@ -16,9 +16,9 @@ import (
 
 // Server implements the Optserve server to be run inside the cluster.
 type Server struct {
-	Port    int
-	Router  *httprouter.Router
-	CfgPath string
+	Port   int
+	Router *httprouter.Router
+	Config *Configuration
 }
 
 // Routes contain all handler functions that responds to GET or POST requests.
@@ -51,12 +51,10 @@ func (s *Server) handleLog() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.WithFields(log.Fields{"path": "/log"}).Trace("received request")
 
-		// Setup the configuration file
-		log.WithFields(log.Fields{"configpath": s.CfgPath}).Info("reading configs")
-		config, err := NewConfiguration(r.Context(), s.CfgPath)
-		if err != nil {
-			log.WithFields(log.Fields{"err": err}).Fatal("NewConfiguration")
-		}
+		// config, err := NewConfiguration(s.CfgPath)
+		// if err != nil {
+		// 	log.WithFields(log.Fields{"err": err}).Fatal("NewConfiguration")
+		// }
 
 		if err := r.ParseForm(); err != nil {
 			http.Error(w, "couldn't parse form", 400)
@@ -80,8 +78,8 @@ func (s *Server) handleLog() http.HandlerFunc {
 			Text:      r.Form["text"][0],
 			UserID:    r.Form["user_id"][0],
 			Timestamp: r.Header.Get("X-Slack-Request-Timestamp"),
-			Area:      config.Area,
-			BQTable:   config.Table,
+			Area:      s.Config.Area,
+			BQTable:   s.Config.Table,
 		}
 
 		resp, err := req.Process()
