@@ -71,11 +71,18 @@ stages:
   jobs:
   - job: Publish
     steps:
+      - task: DownloadPipelineArtifact@2
+      - script: |
+          mkdir artifacts
+          cp '$(Pipeline.Workspace)'/barometer-*/* artifacts
+          ls artifacts/*
+        displayName: Copy all artifacts
       - task: GithubRelease@0
         condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
         inputs:
           gitHubConnection: barometer-release
           repositoryName: '$(build.Repository.Name)'
+          assets: artifacts/*
           addChangeLog: true
           compareWith: 'lastRelease'
         displayName: 'Create Github release'
