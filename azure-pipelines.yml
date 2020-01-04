@@ -18,6 +18,8 @@ strategy:
       os.platform: 'linux'
     Darwin:
       os.platform: 'darwin'
+    Windows:
+      os.platform: 'windows'
 
 pool:
   vmImage: 'ubuntu-latest'
