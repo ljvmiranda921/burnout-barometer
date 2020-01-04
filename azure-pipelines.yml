@@ -4,13 +4,23 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/go
 
 trigger:
-    branches:
-        include:
-        - master
-        - refs/tags/*
-    tags:
-        include:
-        - v*
+  branches:
+    include:
+    - master
+    - refs/tags/*
+  tags:
+    include:
+    - v*
+
+strategy:
+  matrix:
+    Linux:
+      os.platform: 'linux'
+    Darwin:
+      os.platform: 'darwin'
+    Windows:
+      os.platform: 'windows'
+      extension: '.exe'
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -19,6 +29,7 @@ variables:
   GOBIN:  '$(GOPATH)/bin' # Go binaries path
   GOROOT: '/usr/local/go1.11' # Go installation path
   GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
+  GO111MODULE: 'on'
   modulePath: '$(GOPATH)/src/github.com/$(build.repository.name)' # Path to the module's code
 
 steps:
@@ -35,37 +46,36 @@ steps:
 
 - script: |
     go version
-    go get -v -t -d ./...
-    GOOS=windows go get -v -t -d ./...  # special command to get windows deps
+    GOOS=$(os.platform) go get -v -t -d ./...
   workingDirectory: '$(modulePath)'
   displayName: 'Get dependencies'
 
 - script: |
-    GOOS=linux GOARCH=amd64 go build -v -o build/barometer-amd64-linux .
+    GOOS=$(os.platform) GOARCH=amd64 go build -v -o build/barometer-amd64-$(os.platform)$(extension) .
   workingDirectory: '$(modulePath)'
-  displayName: 'Build Linux (amd64) executable'
+  displayName: 'Build executable'
 
-- script: |
-    GOOS=windows GOARCH=amd64 go build -v -o build/barometer-amd64-windows.exe .
-  workingDirectory: '$(modulePath)'
-  displayName: 'Build Windows (amd64) executable'
+- task: CopyFiles@2
+  inputs:
+      sourceFolder: $(modulePath)/build/
+      contents: '*'
+      targetFolder: $(Build.ArtifactStagingDirectory)
+  displayName: 'Copy files to Artifact Staging Directory'
 
-- script: |
-    GOOS=darwin GOARCH=amd64 go build -v -o build/barometer-amd64-darwin .
-  workingDirectory: '$(modulePath)'
-  displayName: 'Build MacOS (amd64) executable'
 
-- script: |
-    ls build/
-  workingDirectory: '$(modulePath)'
-  displayName: 'Show artifacts'
+- task: PublishPipelineArtifact@0
+  inputs:
+      artifactName: barometer-$(os.platform) 
+      targetPath: $(Build.ArtifactStagingDirectory)
+  displayName: 'Publish pipeline artifact'
+
 
 - task: GithubRelease@0
   condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
   inputs:
       gitHubConnection: barometer-release
       repositoryName: '$(build.Repository.Name)'
-      assets: $(modulePath)/build/*
+      assets: $(Build.ArtifactStagingDirectory)
       addChangeLog: true
       compareWith: 'lastRelease'
   displayName: 'Create Github release'
