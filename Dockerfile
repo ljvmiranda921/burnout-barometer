@@ -14,16 +14,15 @@ RUN go build -o ./build/barometer .
 
 
 # STEP 2: Build minimal image with entrypoint
-FROM scratch
+FROM alpine
 COPY --from=builder /app/build/barometer /app
 
 WORKDIR /app
 
-ENV PORT 8080 
-ENV BB_PROJECT_ID 
-ENV BB_TABLE 
-ENV BB_SLACK_TOKEN 
-ENV BB_AREA 
+ENV PORT=8080 
+ENV BB_PROJECT_ID= 
+ENV BB_TABLE=
+ENV BB_SLACK_TOKEN=
+ENV BB_AREA= 
 
-RUN /app/build/barometer init --use-env-vars
-CMD ["/app/barometer", "serve", "--port=${PORT}"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
