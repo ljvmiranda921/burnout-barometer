@@ -54,6 +54,8 @@ func ReadConfiguration(cfgPath string) (*Configuration, error) {
 		return nil, err
 	}
 
+	log.Tracef("%v", config)
+
 	// Decode `SLACK_TOKEN`
 	slackToken, err := base64.StdEncoding.DecodeString(config.Token)
 	if err != nil {
