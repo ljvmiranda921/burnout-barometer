@@ -16,8 +16,9 @@ import (
 
 // Server implements the Optserve server to be run inside the cluster.
 type Server struct {
-	Port   int
-	Router *httprouter.Router
+	Port    int
+	Router  *httprouter.Router
+	CfgPath string
 }
 
 // Routes contain all handler functions that responds to GET or POST requests.
@@ -51,7 +52,8 @@ func (s *Server) handleLog() http.HandlerFunc {
 		log.WithFields(log.Fields{"path": "/log"}).Trace("received request")
 
 		// Setup the configuration file
-		config, err := NewConfiguration(r.Context(), "config.json")
+		log.WithFields(log.Fields{"configpath": s.CfgPath}).Info("reading configs")
+		config, err := NewConfiguration(r.Context(), s.CfgPath)
 		if err != nil {
 			log.WithFields(log.Fields{"err": err}).Fatal("NewConfiguration")
 		}
