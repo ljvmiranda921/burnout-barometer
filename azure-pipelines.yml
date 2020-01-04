@@ -75,7 +75,6 @@ steps:
   inputs:
       gitHubConnection: barometer-release
       repositoryName: '$(build.Repository.Name)'
-      assets: $(Build.ArtifactStagingDirectory)
       addChangeLog: true
       compareWith: 'lastRelease'
   displayName: 'Create Github release'
