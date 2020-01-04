@@ -1,6 +1,0 @@
-{
-    "PROJECT_ID": "playground-263909", 
-    "BQ_TABLE": "playground-263909.burnout_barometer.logs", 
-    "SLACK_TOKEN": "WjRLWXVMT1ZQSUhFOUUyQ0lNQXowUVVF",
-    "AREA": "Asia/Manila"
-}
