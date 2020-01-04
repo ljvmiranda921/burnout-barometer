@@ -20,6 +20,7 @@ strategy:
       os.platform: 'darwin'
     Windows:
       os.platform: 'windows'
+      extension: '.exe'
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -50,8 +51,7 @@ steps:
   displayName: 'Get dependencies'
 
 - script: |
-    [ $(os.platform) == "windows" ] && export EXT=".exe"
-    GOOS=$(os.platform) GOARCH=amd64 go build -v -o build/barometer-amd64-$(os.platform)$(EXT) .
+    GOOS=$(os.platform) GOARCH=amd64 go build -v -o build/barometer-amd64-$(os.platform)$(extension) .
   workingDirectory: '$(modulePath)'
   displayName: 'Build executable'
 
