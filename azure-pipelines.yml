@@ -36,14 +36,29 @@ steps:
 - script: |
     go version
     go get -v -t -d ./...
-    GOOS=windows go get github.com/spf13/cobra  # special command to get mousetrap
-    GOOS=darwin GOARCH=amd64 go build -v -o build/barometer-amd64-darwin .
-    GOOS=windows GOARCH=amd64 go build -v -o build/barometer-amd64-windows.exe .
+    GOOS=windows go get -v -t -d ./...  # special command to get windows deps
+  workingDirectory: '$(modulePath)'
+  displayName: 'Get dependencies'
+
+- script: |
     GOOS=linux GOARCH=amd64 go build -v -o build/barometer-amd64-linux .
+  workingDirectory: '$(modulePath)'
+  displayName: 'Build Linux (amd64) executable'
+
+- script: |
+    GOOS=windows GOARCH=amd64 go build -v -o build/barometer-amd64-windows.exe .
+  workingDirectory: '$(modulePath)'
+  displayName: 'Build Windows (amd64) executable'
+
+- script: |
+    GOOS=darwin GOARCH=amd64 go build -v -o build/barometer-amd64-darwin .
+  workingDirectory: '$(modulePath)'
+  displayName: 'Build MacOS (amd64) executable'
+
+- script: |
     ls build/
   workingDirectory: '$(modulePath)'
-  displayName: 'Get dependencies, then build'
-
+  displayName: 'Show artifacts'
 
 - task: GithubRelease@0
   condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
