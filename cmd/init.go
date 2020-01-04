@@ -64,7 +64,7 @@ flag. Be sure that you have set the following:
 				if err := pkg.WriteConfiguration(cfg, outputPath); err != nil {
 					return err
 				}
-				fmt.Println("Configuration file generated in %s!", outputPath)
+				fmt.Printf("Configuration file generated in %s!", outputPath)
 			}
 
 			return nil
