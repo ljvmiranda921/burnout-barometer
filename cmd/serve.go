@@ -20,8 +20,8 @@ func ServeCommand() *cobra.Command {
 
 	var command = &cobra.Command{
 		Use:     "serve",
-		Short:   "Start the burnout-barometer server",
-		Example: "burnout-barometer serve --port=8080",
+		Short:   "Start the server",
+		Example: "barometer serve --port=8080",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			initLogger(verbosity)
 
