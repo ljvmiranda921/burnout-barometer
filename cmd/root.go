@@ -30,6 +30,7 @@ func NewCommand() *cobra.Command {
 	command.PersistentFlags().CountVarP(&verbosity, "verbosity", "v", "set verbosity")
 
 	// Add subcommands
+	command.AddCommand(InitCommand())
 	command.AddCommand(ServeCommand())
 
 	return command
