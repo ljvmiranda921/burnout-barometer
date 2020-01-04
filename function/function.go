@@ -20,7 +20,7 @@ func BurnoutBarometerFn(w http.ResponseWriter, r *http.Request) {
 	log.Info("request received")
 
 	// Setup application variables
-	config, err := pkg.ReadConfiguration(r.Context(), "config.json")
+	config, err := pkg.ReadConfiguration("config.json")
 	if err != nil {
 		log.WithFields(log.Fields{"err": err}).Fatal("ReadConfiguration")
 	}
