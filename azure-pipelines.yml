@@ -4,7 +4,13 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/go
 
 trigger:
-- master
+    branches:
+        include:
+        - master
+        - refs/tags/*
+    tags:
+        include:
+        - v*
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -40,3 +46,14 @@ steps:
     ls build/
   workingDirectory: '$(modulePath)'
   displayName: 'Get dependencies, then build'
+
+
+- task: GithubRelease@0
+  condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
+  inputs:
+      gitHubConnection: barometer-release
+      repositoryName: '$(build.Repository.Name)'
+      assets: build/*
+      addChangeLog: true
+      compareWith: 'lastRelease'
+  displayName: 'Create Github release'
