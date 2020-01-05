@@ -66,6 +66,9 @@ stages:
           artifactName: barometer-$(os.platform) 
           targetPath: $(Build.ArtifactStagingDirectory)
       displayName: 'Publish pipeline artifact'
+      # TODO: Build docker image task
+      # Image name should be: burnout-barometer:<tag>-<platform>
+      # For example: ljvmiranda921/burnout-barometer:v1.0.0-alpha.0-linux
 - stage: publish
   displayName: PublishArtifacts
   jobs:
@@ -86,3 +89,6 @@ stages:
           addChangeLog: true
           compareWith: 'lastRelease'
         displayName: 'Create Github release'
+      # TODO: Upload docker image to Repository Task
+
+
