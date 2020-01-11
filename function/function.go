@@ -49,7 +49,7 @@ func BurnoutBarometerFn(w http.ResponseWriter, r *http.Request) {
 		UserID:    r.Form["user_id"][0],
 		Timestamp: r.Header.Get("X-Slack-Request-Timestamp"),
 		Area:      config.Area,
-		BQTable:   config.Table,
+		Table:   config.Table,
 	}
 
 	resp, err := req.Process()

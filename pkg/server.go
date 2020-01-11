@@ -79,7 +79,7 @@ func (s *Server) handleLog() http.HandlerFunc {
 			UserID:    r.Form["user_id"][0],
 			Timestamp: r.Header.Get("X-Slack-Request-Timestamp"),
 			Area:      s.Config.Area,
-			BQTable:   s.Config.Table,
+			Table:   s.Config.Table,
 		}
 
 		resp, err := req.Process()

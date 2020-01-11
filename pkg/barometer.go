@@ -22,7 +22,7 @@ type Request struct {
 	UserID    string
 	Timestamp string
 	Area      string
-	BQTable   string
+	Table   string
 	Item      Log
 }
 
@@ -88,8 +88,8 @@ func (r *Request) GetTimestamp() (time.Time, error) {
 // InsertToTable adds the Item entry into the specified Bigquery table.
 func (r *Request) InsertToTable() error {
 	ctx := context.Background()
-	projectID, datasetID, tableID := r.splitBQPath(r.BQTable)
-	log.Printf("using BQ table: %s", r.BQTable)
+	projectID, datasetID, tableID := r.splitBQPath(r.Table)
+	log.Printf("using BQ table: %s", r.Table)
 	client, err := bigquery.NewClient(ctx, projectID)
 	if err != nil {
 		return fmt.Errorf("error in bigquery.NewClient: %v", err)
