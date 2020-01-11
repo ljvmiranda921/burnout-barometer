@@ -84,7 +84,7 @@ func getConfigFromEnvs() (*pkg.Configuration, error) {
 		return nil, err
 	}
 
-	bqTable, err := lookupEnvVar("BB_TABLE")
+	table, err := lookupEnvVar("BB_TABLE")
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +102,7 @@ func getConfigFromEnvs() (*pkg.Configuration, error) {
 
 	config := &pkg.Configuration{
 		ProjectID: projectID,
-		Table:     bqTable,
+		Table:     table,
 		Token:     slackTokenEnc,
 		Area:      area,
 	}
@@ -125,7 +125,7 @@ func getConfigFromPrompt() (*pkg.Configuration, error) {
 		return nil, err
 	}
 
-	bqTable, err := promptString("BigQuery table to store all logs", "my-gcp-project.my-dataset.my-table", false)
+	table, err := promptString("Table to store all logs", "bq://my-gcp-project.my-dataset.my-table", false)
 	if err != nil {
 		return nil, err
 	}
@@ -143,7 +143,7 @@ func getConfigFromPrompt() (*pkg.Configuration, error) {
 
 	config := &pkg.Configuration{
 		ProjectID: projectID,
-		Table:     bqTable,
+		Table:     table,
 		Token:     slackTokenEnc,
 		Area:      area,
 	}
