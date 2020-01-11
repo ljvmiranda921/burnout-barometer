@@ -21,7 +21,7 @@ type Configuration struct {
 }
 
 // WriteConfiguration creates a configuration file at a given output path.
-func WriteConfiguration(cfg *Configuration, outputPath string) error {
+func (cfg *Configuration) WriteConfiguration(outputPath string) error {
 
 	file, _ := os.OpenFile(outputPath, os.O_CREATE|os.O_WRONLY, os.ModePerm)
 	defer file.Close()

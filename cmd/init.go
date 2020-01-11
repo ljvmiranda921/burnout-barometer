@@ -50,7 +50,7 @@ flag. Be sure that you have set the following:
 					return err
 				}
 
-				if err := pkg.WriteConfiguration(cfg, outputPath); err != nil {
+				if err := cfg.WriteConfiguration(outputPath); err != nil {
 					return err
 				}
 				fmt.Println("Configuration file generated in %s!", outputPath)
@@ -61,7 +61,7 @@ flag. Be sure that you have set the following:
 					return err
 				}
 
-				if err := pkg.WriteConfiguration(cfg, outputPath); err != nil {
+				if err := cfg.WriteConfiguration(outputPath); err != nil {
 					return err
 				}
 				fmt.Printf("Configuration file generated in %s!", outputPath)
