@@ -19,6 +19,8 @@ type Server struct {
 	Port   int
 	Router *httprouter.Router
 	Config *Configuration
+
+	database Database
 }
 
 // Routes contain all handler functions that responds to GET or POST requests.
@@ -31,6 +33,17 @@ func (s *Server) Routes() {
 // Start command starts a server on the specific port.
 func (s *Server) Start() error {
 	log.Infof("listening to port %d", s.Port)
+
+	// Identify the scheme for the database connection
+	switch scheme := s.getScheme(s.Config.Table); scheme {
+	case "bigquery", "bq":
+		log.WithFields(log.Fields{"scheme": scheme}).Info("detected scheme")
+		s.database = &BigQuery{URL: s.Config.Table}
+	default:
+		msg := fmt.Sprintf("unknown database scheme: %s", scheme)
+		log.Fatal(msg)
+	}
+
 	http.ListenAndServe(fmt.Sprintf(":%d", s.Port), s.Router)
 	return nil
 }
@@ -73,24 +86,13 @@ func (s *Server) handleLog() http.HandlerFunc {
 			log.Error("empty text in form")
 		}
 
-		// Identify the scheme
-		var db Database
-		switch scheme := s.getScheme(s.Config.Table); scheme {
-		case "bigquery", "bq":
-			db = &BigQuery{URL: s.Config.Table}
-		default:
-			msg := fmt.Sprintf("unknown database scheme: %s", scheme)
-			http.Error(w, msg, 400)
-			log.Fatal(msg)
-		}
-
 		// Process the request
 		req := &Request{
 			Text:      r.Form["text"][0],
 			UserID:    r.Form["user_id"][0],
 			Timestamp: r.Header.Get("X-Slack-Request-Timestamp"),
 			Area:      s.Config.Area,
-			DB:        db,
+			DB:        s.database,
 		}
 
 		resp, err := req.Process()
