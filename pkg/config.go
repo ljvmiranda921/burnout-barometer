@@ -23,7 +23,11 @@ type Configuration struct {
 // WriteConfiguration creates a configuration file at a given output path.
 func (cfg *Configuration) WriteConfiguration(outputPath string) error {
 
-	file, _ := os.OpenFile(outputPath, os.O_CREATE|os.O_WRONLY, os.ModePerm)
+	file, err := os.Create(outputPath)
+	if err != nil {
+		log.WithFields(log.Fields{"err": err}).Fatal("os.Create")
+		return err
+	}
 	defer file.Close()
 
 	e := json.NewEncoder(file)
