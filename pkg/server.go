@@ -35,14 +35,11 @@ func (s *Server) Start() error {
 	log.Infof("listening to port %d", s.Port)
 
 	// Identify the scheme for the database connection
-	switch scheme := s.getScheme(s.Config.Table); scheme {
-	case "bigquery", "bq":
-		log.WithFields(log.Fields{"scheme": scheme}).Info("detected scheme")
-		s.database = &BigQuery{URL: s.Config.Table}
-	default:
-		msg := fmt.Sprintf("unknown database scheme: %s", scheme)
-		log.Fatal(msg)
+	db, err := NewDatabase(s.Config.Table)
+	if err != nil {
+		return err
 	}
+	s.database = db
 
 	http.ListenAndServe(fmt.Sprintf(":%d", s.Port), s.Router)
 	return nil
@@ -105,14 +102,6 @@ func (s *Server) handleLog() http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(resp)
 	}
-}
-
-func (s *Server) getScheme(h string) string {
-	u, err := url.Parse(h)
-	if err != nil {
-		log.Fatal("invalid database URL")
-	}
-	return u.Scheme
 }
 
 // VerifyWebhook checks if the submitted request matches the token provided by Slack
