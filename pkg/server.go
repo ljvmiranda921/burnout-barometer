@@ -73,13 +73,24 @@ func (s *Server) handleLog() http.HandlerFunc {
 			log.Error("empty text in form")
 		}
 
+		// Identify the scheme
+		var db Database
+		switch scheme := s.getScheme(s.Config.Table); scheme {
+		case "bigquery", "bq":
+			db = &BigQuery{URL: s.Config.Table}
+		default:
+			msg := fmt.Sprintf("unknown database scheme: %s", scheme)
+			http.Error(w, msg, 400)
+			log.Fatal(msg)
+		}
+
 		// Process the request
 		req := &Request{
 			Text:      r.Form["text"][0],
 			UserID:    r.Form["user_id"][0],
 			Timestamp: r.Header.Get("X-Slack-Request-Timestamp"),
 			Area:      s.Config.Area,
-			Table:   s.Config.Table,
+			DB:        db,
 		}
 
 		resp, err := req.Process()
@@ -92,6 +103,14 @@ func (s *Server) handleLog() http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(resp)
 	}
+}
+
+func (s *Server) getScheme(h string) string {
+	u, err := url.Parse(h)
+	if err != nil {
+		log.Fatal("invalid database URL")
+	}
+	return u.Scheme
 }
 
 // VerifyWebhook checks if the submitted request matches the token provided by Slack

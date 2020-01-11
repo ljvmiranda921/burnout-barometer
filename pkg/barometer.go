@@ -6,7 +6,6 @@
 package pkg
 
 import (
-	"context"
 	"fmt"
 	"strconv"
 	"strings"
@@ -22,7 +21,7 @@ type Request struct {
 	UserID    string
 	Timestamp string
 	Area      string
-	Table   string
+	DB        Database
 	Item      Log
 }
 
@@ -87,26 +86,12 @@ func (r *Request) GetTimestamp() (time.Time, error) {
 
 // InsertToTable adds the Item entry into the specified Bigquery table.
 func (r *Request) InsertToTable() error {
-	ctx := context.Background()
-	projectID, datasetID, tableID := r.splitBQPath(r.Table)
-	log.Printf("using BQ table: %s", r.Table)
-	client, err := bigquery.NewClient(ctx, projectID)
-	if err != nil {
-		return fmt.Errorf("error in bigquery.NewClient: %v", err)
-	}
-
-	inserter := client.Dataset(datasetID).Table(tableID).Inserter()
-	items := []*Log{&r.Item}
-
-	if err := inserter.Put(ctx, items); err != nil {
+	if err := r.DB.Insert(r.Item); err != nil {
+		log.Errorf("error in inserting item: %v", err)
 		return err
 	}
-	return nil
-}
 
-func (r *Request) splitBQPath(p string) (string, string, string) {
-	s := strings.Split(p, ".")
-	return s[0], s[1], s[2]
+	return nil
 }
 
 // Log is the user log for the barometer. This also serves as
