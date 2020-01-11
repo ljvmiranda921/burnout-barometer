@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"cloud.google.com/go/bigquery"
+	"github.com/go-pg/pg"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -36,6 +37,8 @@ func NewDatabase(dburl string) (Database, error) {
 
 	return db, nil
 }
+
+// BigQuery
 
 type bigQuery struct {
 	URL    string
@@ -68,4 +71,31 @@ func (t *bigQuery) Insert(item Log) error {
 func (t *bigQuery) splitBQPath(p string) (string, string, string) {
 	s := strings.Split(p, ".")
 	return s[0], s[1], s[2]
+}
+
+// Postgres
+
+type postgres struct {
+	URL    string
+	Config *url.URL
+}
+
+func (t *postgres) GetURL() *url.URL {
+	return t.Config
+}
+
+func (t *postgres) Insert(item Log) error {
+	opts, err := pg.ParseURL(t.URL)
+	if err != nil {
+		return fmt.Errorf("error in pg.ParseURL: %v", err)
+	}
+
+	db := pg.Connect(opts)
+	defer db.Close()
+
+	if err := db.Insert(&item); err != nil {
+		return fmt.Errorf("error in db.Insert: %v", err)
+	}
+
+	return nil
 }
