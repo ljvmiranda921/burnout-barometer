@@ -12,6 +12,7 @@ import (
 
 // Database is a generic interface for storing and accessing barometer logs.
 type Database interface {
+	GetURL() *url.URL
 	Insert(item Log) error
 }
 
@@ -27,7 +28,7 @@ func NewDatabase(dburl string) (Database, error) {
 	switch u.Scheme {
 	case "bigquery", "bq":
 		log.WithFields(log.Fields{"scheme": u.Scheme}).Info("detected scheme")
-		db = &BigQuery{URL: dburl, Config: u}
+		db = &bigQuery{URL: dburl, Config: u}
 	default:
 		msg := fmt.Sprintf("unknown database scheme: %s", u.Scheme)
 		log.Fatal(msg)
@@ -36,17 +37,18 @@ func NewDatabase(dburl string) (Database, error) {
 	return db, nil
 }
 
-// BigQuery provides a connection to BigQuery. It implements the Table
-// interface.
-type BigQuery struct {
+type bigQuery struct {
 	URL    string
 	Config *url.URL
 
 	project, dataset, table string
 }
 
-// Insert adds an Item entry into the specified BigQuery table
-func (t *BigQuery) Insert(item Log) error {
+func (t *bigQuery) GetURL() *url.URL {
+	return t.Config
+}
+
+func (t *bigQuery) Insert(item Log) error {
 	ctx := context.Background()
 	project, dataset, table := t.splitBQPath(t.Config.Host)
 	client, err := bigquery.NewClient(ctx, project)
@@ -63,7 +65,7 @@ func (t *BigQuery) Insert(item Log) error {
 	return nil
 }
 
-func (t *BigQuery) splitBQPath(p string) (string, string, string) {
+func (t *bigQuery) splitBQPath(p string) (string, string, string) {
 	s := strings.Split(p, ".")
 	return s[0], s[1], s[2]
 }
