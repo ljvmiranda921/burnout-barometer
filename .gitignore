@@ -13,3 +13,4 @@
 
 # Output of go build
 burnout-barometer*
+config.json
