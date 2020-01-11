@@ -86,3 +86,16 @@ stages:
           addChangeLog: true
           compareWith: 'lastRelease'
         displayName: 'Create Github release'
+      - task: Docker@2 
+        condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
+        inputs:
+          command: buildAndPush
+          repository: ljvmiranda/burnout-barometer
+          containerRegistry: gcrServiceConnection
+          tags: |
+              latest
+              $(Build.SourceBranchName)
+        displayName: 'Build Docker image and push'
+
+
+
