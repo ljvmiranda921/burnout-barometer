@@ -44,12 +44,16 @@ func BurnoutBarometerFn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Store the message and timestamp to BigQuery
+	db, err := pkg.NewDatabase(config.Table)
+	if err != nil {
+		log.WithFields(log.Fields{"err": err}).Fatal("NewDatabase")
+	}
 	req := &pkg.Request{
 		Text:      r.Form["text"][0],
 		UserID:    r.Form["user_id"][0],
 		Timestamp: r.Header.Get("X-Slack-Request-Timestamp"),
 		Area:      config.Area,
-		Table:   config.Table,
+		DB:        db,
 	}
 
 	resp, err := req.Process()
