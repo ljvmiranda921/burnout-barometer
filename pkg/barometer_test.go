@@ -2,7 +2,9 @@ package pkg
 
 import (
 	"reflect"
+	"strconv"
 	"testing"
+	"time"
 )
 
 func TestRequest_ParseMessage(t *testing.T) {
@@ -25,4 +27,15 @@ func TestRequest_ParseMessage(t *testing.T) {
 			t.Errorf("expected: %v, got: %v", tc.want, got)
 		}
 	}
+}
+
+func TestRequest_GetTimestamp(t *testing.T) {
+	timeNow := strconv.FormatInt(time.Now().Unix(), 10)
+	t.Logf("time now in unix: %s", timeNow)
+	request := &Request{Timestamp: timeNow, Area: "Asia/Manila"}
+	ts, err := request.GetTimestamp()
+	if err != nil {
+		t.Errorf("error getting time: %v", err)
+	}
+	t.Logf("time now in human-readable format: %s", ts)
 }
