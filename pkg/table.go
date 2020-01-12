@@ -34,6 +34,9 @@ func NewDatabase(dburl string) (Database, error) {
 	case "bigquery", "bq":
 		log.WithFields(log.Fields{"scheme": u.Scheme}).Info("detected scheme")
 		db = &bigQuery{URL: dburl, Config: u}
+	case "postgres":
+		log.WithFields(log.Fields{"scheme": u.Scheme}).Info("detected scheme")
+		db = &postgres{URL: dburl, Config: u}
 	default:
 		msg := fmt.Sprintf("unknown database scheme: %s", u.Scheme)
 		log.Fatal(msg)
