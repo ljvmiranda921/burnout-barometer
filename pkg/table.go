@@ -1,3 +1,7 @@
+// Copyright 2019 Lester James V. Miranda. All rights reserved.
+// Licensed under the MIT License. See LICENSE in the project root
+// for license information.
+
 package pkg
 
 import (
