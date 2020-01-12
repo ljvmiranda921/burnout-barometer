@@ -65,8 +65,8 @@ github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxv
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
-github.com/ljvmiranda921/burnout-barometer v0.0.0-20200104114127-76bf02452df3 h1:wT7Sq0MiyoxKzS9/tMep7aXn486+xFJsP8dipySt+D8=
-github.com/ljvmiranda921/burnout-barometer v0.0.0-20200104114127-76bf02452df3/go.mod h1:Yp7ngcNJUjDzoN0ZYOT4Rzc9mvQQnTn/5Q2NVYbCfu8=
+github.com/ljvmiranda921/burnout-barometer v1.0.0-alpha.2 h1:oPePTBnX8qTM/2WUhlfdKGPcMFcyH3x6ZjqcogISVaY=
+github.com/ljvmiranda921/burnout-barometer v1.0.0-alpha.2/go.mod h1:Yp7ngcNJUjDzoN0ZYOT4Rzc9mvQQnTn/5Q2NVYbCfu8=
 github.com/lunixbochs/vtclean v0.0.0-20180621232353-2d01aacdc34a/go.mod h1:pHhQNgMf3btfWnGBVipUOjRYhoOsdGqdm/+2c2E2WMI=
 github.com/magiconair/properties v1.8.0/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
 github.com/manifoldco/promptui v0.6.0/go.mod h1:o9/C5VV8IPXxjxpl9au84MtQGIi5dwn7eldAgEdePPs=
