@@ -17,12 +17,12 @@ import (
 
 // Request defines the common form parameters when a slash command is invoked.
 type Request struct {
-	Text      string
-	UserID    string
-	Timestamp string
-	Area      string
-	DB        Database
-	Item      Log
+	Text      string   // The submitted text in the slash command
+	UserID    string   // Slack User ID that submitted the request
+	Timestamp string   // Timestamp of the request
+	Area      string   // IANA-compliant area
+	DB        Database // Database to insert into
+	Item      Log      // The parsed log-message to be passed into the database
 }
 
 // Process parses the request and stores to BigQuery.
@@ -84,7 +84,7 @@ func (r *Request) GetTimestamp() (time.Time, error) {
 	return time.Unix(i, 0).In(loc), nil
 }
 
-// InsertToTable adds the Item entry into the specified Bigquery table.
+// InsertToTable adds the Item entry into the specified database.
 func (r *Request) InsertToTable() error {
 	if err := r.DB.Insert(r.Item); err != nil {
 		log.Errorf("error in inserting item: %v", err)
@@ -95,7 +95,7 @@ func (r *Request) InsertToTable() error {
 }
 
 // Log is the user log for the barometer. This also serves as
-// the schema for the BigQuery table.
+// the schema for the database.
 type Log struct {
 	Timestamp  time.Time
 	UserID     string
@@ -103,7 +103,7 @@ type Log struct {
 	Notes      string
 }
 
-// Save implements the ValueSaver interface.
+// Save allows us to implement BigQuery's ValueSaver interface.
 func (i *Log) Save() (map[string]bigquery.Value, string, error) {
 	return map[string]bigquery.Value{
 		"timestamp":   i.Timestamp,

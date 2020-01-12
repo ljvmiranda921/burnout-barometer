@@ -14,10 +14,10 @@ import (
 
 // Configuration contains all important settings for running the command.
 type Configuration struct {
-	ProjectID string `json:"PROJECT_ID"`
-	Table     string `json:"BQ_TABLE"`
-	Token     string `json:"SLACK_TOKEN"`
-	Area      string `json:"AREA"`
+	ProjectID string `json:"PROJECT_ID"`  // GCP Project ID
+	Table     string `json:"TABLE"`       // Database URL
+	Token     string `json:"SLACK_TOKEN"` // Slack token provided by the app for verification
+	Area      string `json:"AREA"`        // IANA-compliant area
 }
 
 // WriteConfiguration creates a configuration file at a given output path.

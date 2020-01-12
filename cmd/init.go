@@ -36,7 +36,7 @@ If you're planning to use environment variables, then use the --use-env-vars
 flag. Be sure that you have set the following:
 
 - BB_PROJECT_ID: the Google Cloud Platform project ID
-- BQ_TABLE: the BigQuery table to store the logs
+- BQ_TABLE: the database URL to store the logs
 - BB_SLACK_TOKEN: the Slack Token for verifying requests
 - BB_AREA: the local area for setting the timestamp
 `,

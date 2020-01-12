@@ -17,8 +17,8 @@ import (
 
 // Database is a generic interface for storing and accessing barometer logs.
 type Database interface {
-	GetURL() *url.URL
-	Insert(item Log) error
+	GetURL() *url.URL      // Get the URL representation of the database
+	Insert(item Log) error // Insert a Log into the Database
 }
 
 // NewDatabase creates a Database based on the detected scheme of the URL.
