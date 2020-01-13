@@ -22,7 +22,9 @@ type Request struct {
 	Timestamp string   // Timestamp of the request
 	Area      string   // IANA-compliant area
 	DB        Database // Database to insert into
-	Item      Log      // The parsed log-message to be passed into the database
+
+	// The parsed log-message to be passed into the database
+	item Log
 }
 
 // Process parses the request and stores to BigQuery.
@@ -45,7 +47,7 @@ func (r *Request) Process() (*Message, error) {
 		return nil, err
 	}
 
-	r.Item = Log{
+	r.item = Log{
 		Timestamp:  ts,
 		UserID:     r.UserID,
 		LogMeasure: measure,
@@ -57,7 +59,7 @@ func (r *Request) Process() (*Message, error) {
 		return nil, err
 	}
 
-	return r.Item.FormatReply()
+	return r.item.FormatReply()
 }
 
 // ParseMessage extracts the barometer measure and notes from the form text.
@@ -84,9 +86,9 @@ func (r *Request) GetTimestamp() (time.Time, error) {
 	return time.Unix(i, 0).In(loc), nil
 }
 
-// InsertToTable adds the Item entry into the specified database.
+// InsertToTable adds the item entry into the specified database.
 func (r *Request) InsertToTable() error {
-	if err := r.DB.Insert(r.Item); err != nil {
+	if err := r.DB.Insert(r.item); err != nil {
 		log.Errorf("error in inserting item: %v", err)
 		return err
 	}
