@@ -17,8 +17,8 @@ import (
 
 // Database is a generic interface for storing and accessing barometer logs.
 type Database interface {
-	GetURL() *url.URL      // Get the URL representation of the database
-	Insert(item Log) error // Insert a Log into the Database
+	GetURL() *url.URL          // Get the URL representation of the database
+	Insert(item logItem) error // Insert a log into the Database
 }
 
 // NewDatabase creates a Database based on the detected scheme of the URL.
@@ -58,7 +58,7 @@ func (t *bigQuery) GetURL() *url.URL {
 	return t.Config
 }
 
-func (t *bigQuery) Insert(item Log) error {
+func (t *bigQuery) Insert(item logItem) error {
 	ctx := context.Background()
 	project, dataset, table := t.splitBQPath(t.Config.Host)
 	client, err := bigquery.NewClient(ctx, project)
@@ -67,7 +67,7 @@ func (t *bigQuery) Insert(item Log) error {
 	}
 
 	inserter := client.Dataset(dataset).Table(table).Inserter()
-	items := []*Log{&item}
+	items := []*logItem{&item}
 
 	if err := inserter.Put(ctx, items); err != nil {
 		return err
@@ -91,7 +91,7 @@ func (t *postgres) GetURL() *url.URL {
 	return t.Config
 }
 
-func (t *postgres) Insert(item Log) error {
+func (t *postgres) Insert(item logItem) error {
 	opts, err := pg.ParseURL(t.URL)
 	if err != nil {
 		return fmt.Errorf("error in pg.ParseURL: %v", err)

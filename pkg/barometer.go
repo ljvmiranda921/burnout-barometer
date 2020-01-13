@@ -24,7 +24,7 @@ type Request struct {
 	DB        Database // Database to insert into
 
 	// The parsed log-message to be passed into the database
-	item Log
+	item logItem
 }
 
 // Process parses the request and stores to BigQuery.
@@ -47,7 +47,7 @@ func (r *Request) Process() (*Message, error) {
 		return nil, err
 	}
 
-	r.item = Log{
+	r.item = logItem{
 		Timestamp:  ts,
 		UserID:     r.UserID,
 		LogMeasure: measure,
@@ -59,7 +59,7 @@ func (r *Request) Process() (*Message, error) {
 		return nil, err
 	}
 
-	return r.item.FormatReply()
+	return r.item.formatReply()
 }
 
 // ParseMessage extracts the barometer measure and notes from the form text.
@@ -96,9 +96,9 @@ func (r *Request) InsertToTable() error {
 	return nil
 }
 
-// Log is the user log for the barometer. This also serves as
+// logItem is the user log for the barometer. This also serves as
 // the schema for the database.
-type Log struct {
+type logItem struct {
 	Timestamp  time.Time
 	UserID     string
 	LogMeasure int
@@ -106,7 +106,7 @@ type Log struct {
 }
 
 // Save allows us to implement BigQuery's ValueSaver interface.
-func (i *Log) Save() (map[string]bigquery.Value, string, error) {
+func (i *logItem) Save() (map[string]bigquery.Value, string, error) {
 	return map[string]bigquery.Value{
 		"timestamp":   i.Timestamp,
 		"user_id":     i.UserID,
@@ -115,25 +115,25 @@ func (i *Log) Save() (map[string]bigquery.Value, string, error) {
 	}, "", nil
 }
 
-// FormatReply prepares the Slack message as a response to a slash command.
-func (i *Log) FormatReply() (*Message, error) {
+// formatReply prepares the Slack message as a response to a slash command.
+func (i *logItem) formatReply() (*Message, error) {
 	attach := Attachment{
 		Color: "#ef4631",
 		Title: "Burnout Barometer",
 		Text:  fmt.Sprintf("Acknowledged"),
 	}
 
-	message := &Message{
+	msg := &Message{
 		ResponseType: "ephemeral",
 		Text:         fmt.Sprintf("Received: %d (%s)", i.LogMeasure, i.Notes),
 		Attachments:  []Attachment{attach},
 	}
 
-	return message, nil
+	return msg, nil
 }
 
-// Message is the Slack message event.
-// see https://api.slack.com/docs/message-formatting for more information.
+// Message is the Slack message event. see
+// https://api.slack.com/docs/message-formatting for more information.
 type Message struct {
 	ResponseType string       `json:"response_type"`
 	Text         string       `json:"text"`
