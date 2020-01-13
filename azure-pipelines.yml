@@ -52,6 +52,10 @@ stages:
       workingDirectory: '$(modulePath)'
       displayName: 'Get dependencies'
     - script: |
+        go test -v ./...
+      workingDirectory: '$(modulePath)'
+      displayName: 'Run Go test'
+    - script: |
         GOOS=$(os.platform) GOARCH=amd64 go build -v -o build/barometer-amd64-$(os.platform)$(extension) .
       workingDirectory: '$(modulePath)'
       displayName: 'Build executable'
