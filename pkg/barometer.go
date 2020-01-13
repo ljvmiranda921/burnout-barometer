@@ -27,17 +27,20 @@ type Request struct {
 	item logItem
 }
 
-// Process parses the request and stores to BigQuery.
+// Process parses the request and stores to the Database. It forms a series of
+// methods that first parses the Text into a database-compatible format, then
+// converts the Timestamp based on the Area. Lastly, it then inserts the
+// generated log-item into the specified database (BigQuery, Postgres, etc.)
 func (r *Request) Process() (*Message, error) {
-	m, notes, err := r.ParseMessage()
+	m, notes, err := r.parseMessage()
 	if err != nil {
-		log.WithFields(log.Fields{"err": err}).Error("Request.ParseMessage")
+		log.WithFields(log.Fields{"err": err}).Error("Request.parseMessage")
 		return nil, err
 	}
 
-	ts, err := r.GetTimestamp()
+	ts, err := r.getTimestamp()
 	if err != nil {
-		log.WithFields(log.Fields{"err": err}).Error("Request.GetTimestamp")
+		log.WithFields(log.Fields{"err": err}).Error("Request.getTimestamp")
 		return nil, err
 	}
 
@@ -54,24 +57,24 @@ func (r *Request) Process() (*Message, error) {
 		Notes:      notes,
 	}
 
-	if err := r.InsertToTable(); err != nil {
-		log.WithFields(log.Fields{"err": err}).Error("Request.InsertToTable")
+	if err := r.insertToTable(); err != nil {
+		log.WithFields(log.Fields{"err": err}).Error("Request.insertToTable")
 		return nil, err
 	}
 
 	return r.item.formatReply()
 }
 
-// ParseMessage extracts the barometer measure and notes from the form text.
-func (r *Request) ParseMessage() (string, string, error) {
+// parseMessage extracts the barometer measure and notes from the form text.
+func (r *Request) parseMessage() (string, string, error) {
 	list := strings.Fields(r.Text)
 	measure := list[0]
 	notes := strings.Join(list[1:], " ")
 	return measure, notes, nil
 }
 
-// GetTimestamp obtains the timestamp value from the request.
-func (r *Request) GetTimestamp() (time.Time, error) {
+// getTimestamp obtains the timestamp value from the request.
+func (r *Request) getTimestamp() (time.Time, error) {
 	i, err := strconv.ParseInt(r.Timestamp, 10, 64)
 	if err != nil {
 		log.Errorf("cannot parse timestamp %s: %v", r.Timestamp, err)
@@ -86,8 +89,8 @@ func (r *Request) GetTimestamp() (time.Time, error) {
 	return time.Unix(i, 0).In(loc), nil
 }
 
-// InsertToTable adds the item entry into the specified database.
-func (r *Request) InsertToTable() error {
+// insertToTable adds the item entry into the specified database.
+func (r *Request) insertToTable() error {
 	if err := r.DB.Insert(r.item); err != nil {
 		log.Errorf("error in inserting item: %v", err)
 		return err
