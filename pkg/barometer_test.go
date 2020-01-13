@@ -6,10 +6,18 @@
 package pkg
 
 import (
+	"io/ioutil"
 	"strconv"
 	"testing"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
+
+func init() {
+	// Ignore log messages
+	log.SetOutput(ioutil.Discard)
+}
 
 func TestRequest_Process(t *testing.T) {
 	type fields struct {
@@ -33,6 +41,12 @@ func TestRequest_Process(t *testing.T) {
 			want:    &Message{Text: "Received: 4 (hello world)"},
 			wantErr: false,
 		},
+		{
+			name:    "unknown location",
+			fields:  fields{Text: "4 hello world", DebugOnly: true, Timestamp: strconv.FormatInt(time.Now().Unix(), 10), Area: "Europe/Manila"},
+			want:    &Message{},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -51,7 +65,7 @@ func TestRequest_Process(t *testing.T) {
 				t.Errorf("Request.Process() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if got.Text != tt.want.Text {
+			if (got != nil) && (got.Text != tt.want.Text) {
 				t.Errorf("Request.Process() = %v, want %v", got, tt.want)
 			}
 		})
