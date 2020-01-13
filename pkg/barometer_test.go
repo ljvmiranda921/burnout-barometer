@@ -6,8 +6,9 @@
 package pkg
 
 import (
-	"reflect"
+	"strconv"
 	"testing"
+	"time"
 )
 
 func TestRequest_Process(t *testing.T) {
@@ -26,7 +27,12 @@ func TestRequest_Process(t *testing.T) {
 		want    *Message
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			name:    "happy path",
+			fields:  fields{Text: "4 hello world", DebugOnly: true, Timestamp: strconv.FormatInt(time.Now().Unix(), 10), Area: "Asia/Manila"},
+			want:    &Message{Text: "Received: 4 (hello world)"},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -39,12 +45,13 @@ func TestRequest_Process(t *testing.T) {
 				DebugOnly: tt.fields.DebugOnly,
 				item:      tt.fields.item,
 			}
+
 			got, err := r.Process()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Request.Process() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
+			if got.Text != tt.want.Text {
 				t.Errorf("Request.Process() = %v, want %v", got, tt.want)
 			}
 		})
