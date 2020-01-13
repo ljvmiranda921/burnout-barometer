@@ -47,6 +47,12 @@ func TestRequest_Process(t *testing.T) {
 			want:    &Message{},
 			wantErr: true,
 		},
+		{
+			name:    "unknown timestamp",
+			fields:  fields{Text: "4 hello world", DebugOnly: true, Timestamp: "03149a", Area: "Asia/Manila"},
+			want:    &Message{},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
