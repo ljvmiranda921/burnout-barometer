@@ -2,31 +2,34 @@
 // Licensed under the MIT License. See LICENSE in the project root
 // for license information.
 
+// Package pkg contains types and methods for interacting with the barometer.
 package pkg
 
 import (
+	"reflect"
 	"testing"
+	"time"
+
+	"cloud.google.com/go/bigquery"
 )
 
-func TestRequest_ParseMessage(t *testing.T) {
+func TestRequest_Process(t *testing.T) {
 	type fields struct {
 		Text      string
 		UserID    string
 		Timestamp string
 		Area      string
 		DB        Database
-		Item      Log
+		DebugOnly bool
+		item      logItem
 	}
 	tests := []struct {
 		name    string
 		fields  fields
-		want    string
-		want1   string
+		want    *Message
 		wantErr bool
 	}{
-		{name: "single notes", fields: fields{Text: "4 hello"}, want: "4", want1: "hello", wantErr: false},
-		{name: "multiple notes", fields: fields{Text: "4 hello world"}, want: "4", want1: "hello world", wantErr: false},
-		{name: "no notes", fields: fields{Text: "4"}, want: "4", want1: "", wantErr: false},
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -36,18 +39,211 @@ func TestRequest_ParseMessage(t *testing.T) {
 				Timestamp: tt.fields.Timestamp,
 				Area:      tt.fields.Area,
 				DB:        tt.fields.DB,
-				Item:      tt.fields.Item,
+				DebugOnly: tt.fields.DebugOnly,
+				item:      tt.fields.item,
 			}
-			got, got1, err := r.ParseMessage()
+			got, err := r.Process()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Request.ParseMessage() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Request.Process() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Request.Process() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestRequest_parseMessage(t *testing.T) {
+	type fields struct {
+		Text      string
+		UserID    string
+		Timestamp string
+		Area      string
+		DB        Database
+		DebugOnly bool
+		item      logItem
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		want    string
+		want1   string
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := &Request{
+				Text:      tt.fields.Text,
+				UserID:    tt.fields.UserID,
+				Timestamp: tt.fields.Timestamp,
+				Area:      tt.fields.Area,
+				DB:        tt.fields.DB,
+				DebugOnly: tt.fields.DebugOnly,
+				item:      tt.fields.item,
+			}
+			got, got1, err := r.parseMessage()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Request.parseMessage() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if got != tt.want {
-				t.Errorf("Request.ParseMessage() got = %v, want %v", got, tt.want)
+				t.Errorf("Request.parseMessage() got = %v, want %v", got, tt.want)
 			}
 			if got1 != tt.want1 {
-				t.Errorf("Request.ParseMessage() got1 = %v, want %v", got1, tt.want1)
+				t.Errorf("Request.parseMessage() got1 = %v, want %v", got1, tt.want1)
+			}
+		})
+	}
+}
+
+func TestRequest_getTimestamp(t *testing.T) {
+	type fields struct {
+		Text      string
+		UserID    string
+		Timestamp string
+		Area      string
+		DB        Database
+		DebugOnly bool
+		item      logItem
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		want    time.Time
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := &Request{
+				Text:      tt.fields.Text,
+				UserID:    tt.fields.UserID,
+				Timestamp: tt.fields.Timestamp,
+				Area:      tt.fields.Area,
+				DB:        tt.fields.DB,
+				DebugOnly: tt.fields.DebugOnly,
+				item:      tt.fields.item,
+			}
+			got, err := r.getTimestamp()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Request.getTimestamp() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Request.getTimestamp() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestRequest_insertToTable(t *testing.T) {
+	type fields struct {
+		Text      string
+		UserID    string
+		Timestamp string
+		Area      string
+		DB        Database
+		DebugOnly bool
+		item      logItem
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := &Request{
+				Text:      tt.fields.Text,
+				UserID:    tt.fields.UserID,
+				Timestamp: tt.fields.Timestamp,
+				Area:      tt.fields.Area,
+				DB:        tt.fields.DB,
+				DebugOnly: tt.fields.DebugOnly,
+				item:      tt.fields.item,
+			}
+			if err := r.insertToTable(); (err != nil) != tt.wantErr {
+				t.Errorf("Request.insertToTable() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func Test_logItem_Save(t *testing.T) {
+	type fields struct {
+		Timestamp  time.Time
+		UserID     string
+		LogMeasure int
+		Notes      string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		want    map[string]bigquery.Value
+		want1   string
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			i := &logItem{
+				Timestamp:  tt.fields.Timestamp,
+				UserID:     tt.fields.UserID,
+				LogMeasure: tt.fields.LogMeasure,
+				Notes:      tt.fields.Notes,
+			}
+			got, got1, err := i.Save()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("logItem.Save() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("logItem.Save() got = %v, want %v", got, tt.want)
+			}
+			if got1 != tt.want1 {
+				t.Errorf("logItem.Save() got1 = %v, want %v", got1, tt.want1)
+			}
+		})
+	}
+}
+
+func Test_logItem_formatReply(t *testing.T) {
+	type fields struct {
+		Timestamp  time.Time
+		UserID     string
+		LogMeasure int
+		Notes      string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		want    *Message
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			i := &logItem{
+				Timestamp:  tt.fields.Timestamp,
+				UserID:     tt.fields.UserID,
+				LogMeasure: tt.fields.LogMeasure,
+				Notes:      tt.fields.Notes,
+			}
+			got, err := i.formatReply()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("logItem.formatReply() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("logItem.formatReply() = %v, want %v", got, tt.want)
 			}
 		})
 	}
