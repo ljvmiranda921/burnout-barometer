@@ -23,6 +23,10 @@ type Request struct {
 	Area      string   // IANA-compliant area
 	DB        Database // Database to insert into
 
+	// If set to true, then the Process() method will not insert into the
+	// database. The resulting Message is just returned.
+	DebugOnly bool
+
 	// The parsed log-message to be passed into the database
 	item logItem
 }
@@ -57,9 +61,13 @@ func (r *Request) Process() (*Message, error) {
 		Notes:      notes,
 	}
 
-	if err := r.insertToTable(); err != nil {
-		log.WithFields(log.Fields{"err": err}).Error("Request.insertToTable")
-		return nil, err
+	if r.DebugOnly {
+		log.Info("DebugOnly is set to true, will not insert to database")
+	} else {
+		if err := r.insertToTable(); err != nil {
+			log.WithFields(log.Fields{"err": err}).Error("Request.insertToTable")
+			return nil, err
+		}
 	}
 
 	return r.item.formatReply()
