@@ -53,7 +53,7 @@ flag. Be sure that you have set the following:
 				if err := cfg.WriteConfiguration(outputPath); err != nil {
 					return err
 				}
-				fmt.Println("Configuration file generated in %s!", outputPath)
+				fmt.Printf("Configuration file generated in %s!", outputPath)
 
 			} else {
 				cfg, err := getConfigFromPrompt()
