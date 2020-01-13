@@ -29,7 +29,7 @@ func ServeCommand() *cobra.Command {
 
 			config, err := pkg.ReadConfiguration(cfgPath)
 			if err != nil {
-				fmt.Println("error reading configuration: %s", err)
+				fmt.Printf("error reading configuration: %s", err)
 				return err
 			}
 
