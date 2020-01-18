@@ -21,6 +21,10 @@ type Server struct {
 	Config *Configuration
 
 	database Database
+
+	// If set to true, then the Request.Process() method will not insert into
+	// the database. The resulting Message is just returned.
+	DebugOnly bool
 }
 
 // Routes contain all handler functions that responds to GET or POST requests.
@@ -90,6 +94,7 @@ func (s *Server) handleLog() http.HandlerFunc {
 			Timestamp: r.Header.Get("X-Slack-Request-Timestamp"),
 			Area:      s.Config.Area,
 			DB:        s.database,
+			DebugOnly: s.DebugOnly,
 		}
 
 		resp, err := req.Process()
