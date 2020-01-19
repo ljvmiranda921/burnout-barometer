@@ -18,6 +18,7 @@ func ServeCommand() *cobra.Command {
 	var (
 		port    int
 		cfgPath string
+		debug   bool
 	)
 
 	var command = &cobra.Command{
@@ -33,10 +34,15 @@ func ServeCommand() *cobra.Command {
 				return err
 			}
 
+			if debug {
+				fmt.Printf("--debug-mode is set to true, will not insert data into database\n")
+			}
+
 			server := pkg.Server{
-				Port:   port,
-				Router: httprouter.New(),
-				Config: config,
+				Port:      port,
+				Router:    httprouter.New(),
+				Config:    config,
+				DebugOnly: debug,
 			}
 
 			server.Routes()
@@ -48,5 +54,6 @@ func ServeCommand() *cobra.Command {
 	// Add flags
 	command.Flags().IntVarP(&port, "port", "p", 8080, "Port to run the server on")
 	command.Flags().StringVarP(&cfgPath, "config", "c", "config.json", "Path to configuration file")
+	command.Flags().BoolVar(&debug, "debug-mode", false, "Debug-mode, don't write to table")
 	return command
 }
