@@ -65,11 +65,6 @@ func (s *Server) handleLog() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.WithFields(log.Fields{"path": "/log"}).Trace("received request")
 
-		// config, err := NewConfiguration(s.CfgPath)
-		// if err != nil {
-		// 	log.WithFields(log.Fields{"err": err}).Fatal("NewConfiguration")
-		// }
-
 		if err := r.ParseForm(); err != nil {
 			http.Error(w, "couldn't parse form", 400)
 			log.WithFields(log.Fields{"err": err}).Error("http.Request.ParseForm")
