@@ -51,11 +51,11 @@ func (s *Server) Start() error {
 
 func (s *Server) handleIndex() http.HandlerFunc {
 	type response struct {
-		Data string `json:"data"`
+		Message string `json:"message"`
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.WithFields(log.Fields{"path": "/"}).Trace("received request")
-		res := response{Data: "PONG"}
+		res := response{Message: "PONG"}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(&res)
 	}
@@ -64,22 +64,38 @@ func (s *Server) handleIndex() http.HandlerFunc {
 func (s *Server) handleLog() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.WithFields(log.Fields{"path": "/log"}).Trace("received request")
+		w.Header().Set("Content-Type", "application/json")
 
 		if err := r.ParseForm(); err != nil {
-			http.Error(w, "couldn't parse form", 400)
-			log.WithFields(log.Fields{"err": err}).Error("http.Request.ParseForm")
+			e := errorMsg{
+				Message: fmt.Sprintf("couldn't parse form: %s", err),
+				Code:    http.StatusBadRequest,
+			}
+			e.JSONError(w)
+			log.WithFields(log.Fields{"err": e}).Error("http.Request.ParseForm")
+			return
 		}
 
 		// Check if authentication token is correct
 		if err := VerifyWebhook(r.Form, s.Config.Token); err != nil {
-			http.Error(w, "webhook may be empty, missing, or unauthorized", 400)
-			log.WithFields(log.Fields{"err": err}).Error("VerifyWebhook")
+			e := errorMsg{
+				Message: fmt.Sprintf("token may be missing or invalid: %s", err),
+				Code:    http.StatusUnauthorized,
+			}
+			e.JSONError(w)
+			log.WithFields(log.Fields{"err": e.Message}).Error("VerifyWebhook")
+			return
 		}
 
 		// Check if text exists
 		if len(r.Form["text"]) == 0 {
-			http.Error(w, "empty text in form", 400)
-			log.Error("empty text in form")
+			e := errorMsg{
+				Message: "empty text in form",
+				Code:    http.StatusBadRequest,
+			}
+			e.JSONError(w)
+			log.Error(e.Message)
+			return
 		}
 
 		// Process the request
@@ -94,12 +110,16 @@ func (s *Server) handleLog() http.HandlerFunc {
 
 		resp, err := req.Process()
 		if err != nil {
-			http.Error(w, "error in processing request", 400)
-			log.WithFields(log.Fields{"err": err}).Error("Request.Process")
+			e := errorMsg{
+				Message: fmt.Sprintf("error in processing request: %s", err),
+				Code:    http.StatusBadRequest,
+			}
+			e.JSONError(w)
+			log.WithFields(log.Fields{"err": e.Message}).Error("Request.Process")
+			return
 		}
 
 		// Send reply back to Slack
-		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(resp)
 	}
 }
@@ -116,4 +136,15 @@ func VerifyWebhook(form url.Values, token string) error {
 	}
 
 	return nil
+}
+
+type errorMsg struct {
+	Message string `json:"message"`
+	Code    int    `json:"status_code"`
+}
+
+func (e errorMsg) JSONError(w http.ResponseWriter) string {
+	w.WriteHeader(e.Code)
+	json.NewEncoder(w).Encode(&e)
+	return e.Message
 }
