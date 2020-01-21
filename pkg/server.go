@@ -100,8 +100,8 @@ func (s *Server) handleLog() http.HandlerFunc {
 
 		// Process the request
 		req := &Request{
-			Text:      r.Form["text"][0],
-			UserID:    r.Form["user_id"][0],
+			Text:      r.FormValue("text"),
+			UserID:    r.FormValue("user_id"),
 			Timestamp: r.Header.Get("X-Slack-Request-Timestamp"),
 			Area:      s.Config.Area,
 			DB:        s.database,
