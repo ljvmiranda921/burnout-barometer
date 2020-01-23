@@ -1,4 +1,4 @@
-// Copyright © 2019 Lester James V. Miranda <ljvmiranda@gmail.com>
+// Copyright © 2020 Lester James V. Miranda <ljvmiranda@gmail.com>
 // Licensed under the MIT License. See LICENSE in the project root
 // for license information.
 
