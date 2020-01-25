@@ -26,5 +26,3 @@ team's stress and work life.
 
 ## How it works
 
-
-## License
