@@ -14,7 +14,7 @@ team's stress and work life.
 {: .fs-6 .fw-300 }
 
 
-[Download]({{ site.baseurl }}/downloads){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 } [View it on GitHub](https://github.com/ljvmiranda921/burnout-barometer){: .btn .fs-5 .mb-4 .mb-md-0 }
+[Download]({{ site.baseurl }}/download){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 } [View it on GitHub](https://github.com/ljvmiranda921/burnout-barometer){: .btn .fs-5 .mb-4 .mb-md-0 }
 
 ---
 

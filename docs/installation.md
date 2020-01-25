@@ -13,9 +13,9 @@ description: "Set-up and Installation"
 Burnout Barometer is easy-to-configure and deployable as a serverless application.
 {: .fs-6 .fw-300 }
 
-Assuming that you already know how to create a [Slack
-App](https://api.slack.com/start), this page will walk you through setting-up
-the barometer and various deployment options at your disposal.
+Assuming that you already know [how to create a Slack
+App](https://api.slack.com/start), this page will walk you through on how to set-up
+your Barometer, then show various deployment options at your disposal.
 
 ---
 
@@ -29,11 +29,11 @@ the barometer and various deployment options at your disposal.
 ## Initial Setup 
 
 1. **Download the executable**. Ensure that you have downloaded the `barometer`
-   executable. Follow the [download instructions]({{ site.baseurl }}/downloads)
+   executable. Follow the [download instructions]({{ site.baseurl }}/download)
    for more info.
-2. **Initialize configuration**. Run `barometer init`. It will start a series
-   of prompts that will walk you through in configuring the barometer. The
-   following values need to be set:
+2. **Initialize configuration**. Run `barometer init`. Answer a series of
+   prompts to configure your Barometer. The following config options need to be
+   set:
 
 
     v1.0.0-alpha
@@ -44,36 +44,34 @@ the barometer and various deployment options at your disposal.
     | GCP Project ID | The Google Cloud Project ID (GCP) for easy-access of GCP resources. This will be deprecated in the first major release.                                                                                                                                              |
     | Table          | The database connection URL to store Barometer logs. For Bigquery, use the `bq` protocol like so: `bq://my-gcp-project.my-dataset.my-table`                                                                                                                          |
     | Slack Token    | The Slack Token generated whenever you create an App. This is used to verify that the incoming request came from the authorized account. See this [page](https://slack.com/intl/en-ph/help/articles/215770388-Create-and-regenerate-API-tokens) for more information |
-    | Area           | The IANA compliant area for correcting the timezone. For example, `Asia/Manila`. This will be deprecated in the first major release.                                                                                                                                 |
+    | Area           | The [IANA tz database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for getting the timezone. For example, `Asia/Manila`. This will be deprecated in the first major release.                                                                                                                                 |
 
     You can find more information about the `init` command by running
     `barometer init --help`.
 
-3. **Check if config file has been generated**. After running the `init`
-   command, you should see a `config.json` file that contains all necessary
-   configurations. We will use that later on when deploying or starting the
-   server.
+3. **Check if a config file has been generated**. After running the `init`
+   command, you should see a `config.json` file with your configuration. We
+   will use this later on when deploying or starting the server.
 
 ## Deployment Options
 
-Burnout Barometer lives inside a server, you can serve the application by
-various means. Lastly, you can also take advantage of our Docker image located
-in the Azure Container Registry.
+Burnout Barometer is a server-side application, and can be deployed by various
+means. You can also check out our Docker image located in the Azure
+Container Registry.
 
 ### Deploy via Google Cloud Functions
 
 To deploy via [Google Cloud Functions](https://cloud.google.com/functions/),
-clone the Github repository to access the functions file:
+clone the Github repository to access the `function/` directory:
 
 ```bash
 git clone git@github.com:ljvmiranda921/burnout-barometer.git
 ```
 
-Copy over the `config.json` that you've generated into the `function`
-directory:
+Copy over the `config.json` that you've generated before into this path:
 
 ```bash
-cp path/of/config.json function
+cp path/of/config.json function/
 ```
 
 Lastly, head to the `function/` directory and execute the Cloud Function deploy
@@ -84,7 +82,7 @@ cd function/
 gcloud functions deploy BurnoutBarometerFn --runtime go111 --triger-http
 ```
 
-Once successful, Cloud Functions will provide you with a URL that you can now
+Once successful, Cloud Functions will provide you a URL that you can now
 add in your Slack Application's Slash command.
 
 ### Deploy via Google Cloud Run

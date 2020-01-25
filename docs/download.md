@@ -1,8 +1,8 @@
 ---
-title: Downloads
+title: Download
 nav_order: 3
 layout: default
-description: "Downloads"
+description: "Download"
 ---
 
 # Download
