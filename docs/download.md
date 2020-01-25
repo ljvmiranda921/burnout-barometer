@@ -39,3 +39,9 @@ between `linux`, `windows`, or `darwin`:
     ```
 
 Ensure that you have downloaded barometer correctly, run `barometer --version`
+
+Once you've successfully downloaded the executable, head over to the
+[Installation page]({{ site.baseurl }}/installation) to setup and deploy your
+barometer!
+{: .info }
+

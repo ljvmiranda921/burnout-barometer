@@ -86,3 +86,8 @@ Once successful, Cloud Functions will provide you a URL that you can now
 add in your Slack Application's Slash command.
 
 ### Deploy via Google Cloud Run
+
+
+Now that you have configured and deployed your barometer, check-out the [Usage
+Section]({{ site.baseurl }}/usage) to learn more about this tool!
+{: .info }
