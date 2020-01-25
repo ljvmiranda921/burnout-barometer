@@ -57,6 +57,31 @@ Burnout Barometer lives inside a server, you can serve the application by
 various means. Lastly, you can also take advantage of our Docker image located
 in the Azure Container Registry.
 
-### Deploy via Cloud Functions
+### Deploy via Google Cloud Functions
 
-### Deploy via Cloud Run
+To deploy via [Google Cloud Functions](https://cloud.google.com/functions/),
+clone the Github repository to access the functions file:
+
+```bash
+git clone git@github.com:ljvmiranda921/burnout-barometer.git
+```
+
+Copy over the `config.json` that you've generated into the `function`
+directory:
+
+```bash
+cp path/of/config.json function
+```
+
+Lastly, head to the `function/` directory and execute the Cloud Function deploy
+command:
+
+```bash
+cd function/
+gcloud functions deploy BurnoutBarometerFn --runtime go111 --triger-http
+```
+
+Once successful, Cloud Functions will provide you with a URL that you can now
+add in your Slack Application's Slash command.
+
+### Deploy via Google Cloud Run
