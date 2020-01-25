@@ -46,6 +46,9 @@ the barometer and various deployment options at your disposal.
     | Slack Token    | The Slack Token generated whenever you create an App. This is used to verify that the incoming request came from the authorized account. See this [page](https://slack.com/intl/en-ph/help/articles/215770388-Create-and-regenerate-API-tokens) for more information |
     | Area           | The IANA compliant area for correcting the timezone. For example, `Asia/Manila`. This will be deprecated in the first major release.                                                                                                                                 |
 
+    You can find more information about the `init` command by running
+    `barometer init --help`.
+
 3. **Check if config file has been generated**. After running the `init`
    command, you should see a `config.json` file that contains all necessary
    configurations. We will use that later on when deploying or starting the
