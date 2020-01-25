@@ -94,7 +94,7 @@ stages:
         condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
         inputs:
           command: buildAndPush
-          repository: ljvmiranda.azurecr.io/burnout-barometer
+          repository: burnout-barometer
           containerRegistry: acrServiceConnection
           tags: |
               latest
