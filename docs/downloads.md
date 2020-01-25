@@ -7,6 +7,9 @@ description: "Downloads"
 
 # Download
 
+Burnout Barometer is built on Go and packaged into a single binary.
+{: .fs-6 .fw-300 }
+
 You can get the `barometer` executable from the
 [Releases](https://github.com/ljvmiranda921/burnout-barometer/releases) page. 
 For the latest version, follow the instructions below.

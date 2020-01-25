@@ -51,10 +51,11 @@ the barometer and various deployment options at your disposal.
    configurations. We will use that later on when deploying or starting the
    server.
 
-
-
-
 ## Deployment Options
+
+Burnout Barometer lives inside a server, you can serve the application by
+various means. Lastly, you can also take advantage of our Docker image located
+in the Azure Container Registry.
 
 ### Deploy via Cloud Functions
 
