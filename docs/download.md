@@ -7,7 +7,7 @@ description: "Download"
 
 # Download
 
-Burnout Barometer is built in Go and packaged into a single binary.
+Burnout Barometer is built on Go and packaged into a single binary.
 {: .fs-6 .fw-300 }
 
 You can get the `barometer` executable from the
