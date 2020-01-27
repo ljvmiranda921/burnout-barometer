@@ -48,6 +48,10 @@ heading_anchors: true
 # Footer content appears at the bottom of every page's main content
 footer_content: "Copyright &copy; 2020 Lester James V. Miranda. Distributed by an <a href=\"https://github.com/ljvmiranda921/burnout-barometer/tree/master/LICENSE.txt\">MIT license.</a>"
 
+
+# Google analytics
+ga_tracking: UA-106021948-1
+
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
 # to override the default setting.
