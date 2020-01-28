@@ -39,12 +39,12 @@ your Barometer, then show various deployment options at your disposal.
     v1.0.0-alpha
     {: .label .label }
 
-    | Option         | Description                                                                                                                                                                                                                                                          |
-    |----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-    | GCP Project ID | The Google Cloud Project ID (GCP) for easy-access of GCP resources. This will be deprecated in the first major release.                                                                                                                                              |
-    | Table          | The database connection URL to store Barometer logs. For Bigquery, use the `bq` protocol like so: `bq://my-gcp-project.my-dataset.my-table`                                                                                                                          |
-    | Slack Token    | The Slack Token generated whenever you create an App. This is used to verify that the incoming request came from the authorized account. See this [page](https://slack.com/intl/en-ph/help/articles/215770388-Create-and-regenerate-API-tokens) for more information |
-    | Area           | The [IANA tz database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for getting the timezone. For example, `Asia/Manila`. This will be deprecated in the first major release.                                                                                                                                 |
+    | Option         | Docker Env Var | Description                                                                                                                                                                                                                                                          |
+    |----------------|----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | GCP Project ID | BB_PROJECT_ID  | The Google Cloud Project ID (GCP) for easy-access of GCP resources. This will be deprecated in the first major release.                                                                                                                                              |
+    | Table          | BB_TABLE       | The database connection URL to store Barometer logs. For Bigquery, use the `bq` protocol like so: `bq://my-gcp-project.my-dataset.my-table`                                                                                                                          |
+    | Slack Token    | BB_SLACK_TOKEN | The Slack Token generated whenever you create an App. This is used to verify that the incoming request came from the authorized account. See this [page](https://slack.com/intl/en-ph/help/articles/215770388-Create-and-regenerate-API-tokens) for more information |
+    | Area           | BB_AREA        | The IANA compliant area for correcting the timezone. For example, `Asia/Manila`. This will be deprecated in the first major release.                                                                                                                                 |
 
     You can find more information about the `init` command by running
     `barometer init --help`.
@@ -87,6 +87,21 @@ add in your Slack Application's Slash command.
 
 ### Deploy via Google Cloud Run
 
+You can deploy to [Google Cloud Run](https://cloud.google.com/run/) using the
+`ljvmiranda.azurecr.io/burnout-barometer` Docker image. You need to set
+some [environment variables]({{ site.baseurl  }}/installation.html#initial-setup) to configure the barometer: 
+
+To deploy, run the following command:
+
+```bash
+gcloud beta run deploy burnout-barometer \
+    --image ljvmiranda.azurecr.io/burnout-barometer \
+    --set-env-vars=BB_PROJECT_ID=<PROJECT_ID>,BB_TABLE=<TABLE>,BB_SLACK_TOKEN=<TOKEN>,BB_AREA=<AREA>
+```
+
+Lastly, you can also click the [Deploy to Cloud Run](https://github.com/ljvmiranda921/burnout-barometer) button in the README!
+
+---
 
 Now that you have configured and deployed your barometer, check-out the [Usage
 Section]({{ site.baseurl }}/usage) to learn more about this tool!
