@@ -99,7 +99,9 @@ gcloud beta run deploy burnout-barometer \
     --set-env-vars=BB_PROJECT_ID=<PROJECT_ID>,BB_TABLE=<TABLE>,BB_SLACK_TOKEN=<TOKEN>,BB_AREA=<AREA>
 ```
 
-Lastly, you can also click the [Deploy to Cloud Run](https://github.com/ljvmiranda921/burnout-barometer) button in the README!
+Or better yet, just click the button below:
+
+[![Run on Google Cloud](https://deploy.cloud.run/button.svg)](https://deploy.cloud.run?git_repo=https://github.com/ljvmiranda921/burnout-barometer.git)
 
 ---
 
