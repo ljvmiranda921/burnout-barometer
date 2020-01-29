@@ -15,7 +15,7 @@
         },
         "BB_AREA": {
             "description": "IANA-compliant area for timezone",
-            "default": "Asia/Manila",
+            "value": "Asia/Manila",
             "required": true
         }
     },
