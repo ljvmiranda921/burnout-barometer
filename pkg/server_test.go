@@ -165,3 +165,7 @@ func TestVerifyWebhook(t *testing.T) {
 		})
 	}
 }
+
+func ExampleVerifyWebhook() {
+
+}
