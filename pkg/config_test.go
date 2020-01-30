@@ -5,8 +5,11 @@
 package pkg
 
 import (
+	"fmt"
 	"os"
 	"testing"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func TestConfiguration_WriteConfiguration(t *testing.T) {
@@ -84,4 +87,28 @@ func TestReadConfiguration(t *testing.T) {
 			}
 		})
 	}
+}
+
+func ExampleReadConfiguration() {
+	config, err := ReadConfiguration("path/to/config.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("%v", config)
+}
+
+func ExampleConfiguration_WriteConfiguration() {
+	config := &Configuration{
+		ProjectID: "my-project-id",
+		Table:     "bq://my-project.my-dataset.my-table",
+		Token:     "9afhazh1gqlakth",
+		Area:      "Asia/Manila",
+	}
+
+	err := config.WriteConfiguration("path/to/config.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }
