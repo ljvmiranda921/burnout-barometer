@@ -168,11 +168,10 @@ func TestVerifyWebhook(t *testing.T) {
 }
 
 func ExampleVerifyWebhook() {
-
-	// example token obtained from Slack
+	// Example token obtained from Slack
 	token := "M4KY3LOVPIhE9E2zIMAz0QUE"
 
-	// example query sent by the slash command
+	// Example query sent by the slash command
 	q := "token=M4KY3LOVPIhE9E2zIMAz0QUE&text=4 hello&user_id=UA1DXYCL2"
 	v, err := url.ParseQuery(q)
 	if err != nil {
@@ -180,7 +179,7 @@ func ExampleVerifyWebhook() {
 	}
 
 	if err := VerifyWebhook(v, token); err != nil {
-		// webhook didn't match, throw an error
+		// Webhook didn't match, throw an error
 		log.Fatal(err)
 	}
 }
