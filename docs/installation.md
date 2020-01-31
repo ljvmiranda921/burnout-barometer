@@ -54,26 +54,6 @@ your Barometer, then show various deployment options at your disposal.
    command, you should see a `config.json` file with your configuration. We
    will use this later on when deploying or starting the server.
 
-### Building binaries (Optional)
-
-You can also clone and build Burnout Barometer straight from Github. The
-following steps require Go 1.11 or above.
-
-First, ensure that [Go Modules](https://github.com/golang/go/wiki/Modules) is enabled:
-
-```bash
-export GO111MODULE=on
-```
-
-Then, you can clone and build the binaries:
-
-
-```bash
-git clone git@github.com:ljvmiranda921/burnout-barometer.git
-cd burnout-barometer
-go get
-go build .
-```
 
 ## Deployment Options
 
