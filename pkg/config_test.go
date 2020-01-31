@@ -90,6 +90,8 @@ func TestReadConfiguration(t *testing.T) {
 }
 
 func ExampleReadConfiguration() {
+
+	// read config from a file
 	config, err := ReadConfiguration("path/to/config.json")
 	if err != nil {
 		log.Fatal(err)
@@ -99,10 +101,12 @@ func ExampleReadConfiguration() {
 }
 
 func ExampleConfiguration_WriteConfiguration() {
+
+	// create a sample configuration
 	config := &Configuration{
 		ProjectID: "my-project-id",
 		Table:     "bq://my-project.my-dataset.my-table",
-		Token:     "9afhazh1gqlakth",
+		Token:     "M4KY3LOVPIhE9E2zIMAz0QUE",
 		Area:      "Asia/Manila",
 	}
 
