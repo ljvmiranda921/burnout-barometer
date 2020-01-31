@@ -2,6 +2,7 @@
 title: Installation
 nav_order: 1
 layout: default
+permalink: installation/
 description: "Set-up and Installation"
 ---
 
@@ -35,16 +36,12 @@ your Barometer, then show various deployment options at your disposal.
    prompts to configure your Barometer. The following config options need to be
    set:
 
-
-    v1.0.0-alpha
-    {: .label .label }
-
     | Option         | Docker Env Var | Description                                                                                                                                                                                                                                                          |
     |----------------|----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-    | GCP Project ID | BB_PROJECT_ID  | The Google Cloud Project ID (GCP) for easy-access of GCP resources. This will be deprecated in the first major release.                                                                                                                                              |
+    | GCP Project ID | BB_PROJECT_ID  | <span class="label label-red">Deprecated</span> The Google Cloud Project ID (GCP) for easy-access of GCP resources. This will be deprecated in the first major release.                                                                                                                                              |
     | Table          | BB_TABLE       | The database connection URL to store Barometer logs. For Bigquery, use the `bq` protocol like so: `bq://my-gcp-project.my-dataset.my-table`                                                                                                                          |
     | Slack Token    | BB_SLACK_TOKEN | The Slack Token generated whenever you create an App. This is used to verify that the incoming request came from the authorized account. See this [page](https://slack.com/intl/en-ph/help/articles/215770388-Create-and-regenerate-API-tokens) for more information |
-    | Area           | BB_AREA        | The IANA compliant area for correcting the timezone. For example, `Asia/Manila`. This will be deprecated in the first major release.                                                                                                                                 |
+    | Area           | BB_AREA        | <span class="label label-red">Deprecated</span> The IANA compliant area for correcting the timezone. For example, `Asia/Manila`. This will be deprecated in the first major release.                                                                                                                                 |
 
     You can find more information about the `init` command by running
     `barometer init --help`.
@@ -52,6 +49,7 @@ your Barometer, then show various deployment options at your disposal.
 3. **Check if a config file has been generated**. After running the `init`
    command, you should see a `config.json` file with your configuration. We
    will use this later on when deploying or starting the server.
+
 
 ## Deployment Options
 
