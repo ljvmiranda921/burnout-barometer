@@ -2,6 +2,7 @@
 title: Installation
 nav_order: 1
 layout: default
+permalink: installation/
 description: "Set-up and Installation"
 ---
 

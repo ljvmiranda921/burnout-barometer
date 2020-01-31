@@ -2,6 +2,7 @@
 title: Download
 nav_order: 3
 layout: default
+permalink: download/
 description: "Download"
 ---
 
