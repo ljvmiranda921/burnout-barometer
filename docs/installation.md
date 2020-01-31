@@ -2,6 +2,7 @@
 title: Installation
 nav_order: 1
 layout: default
+permalink: installation/
 description: "Set-up and Installation"
 ---
 
@@ -52,6 +53,7 @@ your Barometer, then show various deployment options at your disposal.
 3. **Check if a config file has been generated**. After running the `init`
    command, you should see a `config.json` file with your configuration. We
    will use this later on when deploying or starting the server.
+
 
 ## Deployment Options
 

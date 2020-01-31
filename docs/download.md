@@ -2,6 +2,7 @@
 title: Download
 nav_order: 3
 layout: default
+permalink: download/
 description: "Download"
 ---
 
@@ -39,6 +40,31 @@ between `linux`, `windows`, or `darwin`:
     ```
 
 Ensure that you have downloaded barometer correctly, run `barometer --version`
+
+
+## Building binaries (Optional)
+
+You can also clone and build Burnout Barometer straight from
+[Github](https://github.com/ljvmiranda921/burnout-barometer). The following
+steps require [Go 1.11](https://golang.org/doc/go1.11) or above.
+
+First, ensure that [Go Modules](https://github.com/golang/go/wiki/Modules) is enabled:
+
+```bash
+export GO111MODULE=on
+```
+
+Then, you can clone the repository and build the binaries:
+
+
+```bash
+git clone git@github.com:ljvmiranda921/burnout-barometer.git
+cd burnout-barometer
+go get
+go build .
+```
+
+---
 
 Once you've successfully downloaded the executable, head over to the
 [Installation page]({{ site.baseurl }}/installation) to setup and deploy your
