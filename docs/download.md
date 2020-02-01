@@ -42,10 +42,10 @@ between `linux`, `windows`, or `darwin`:
 Ensure that you have downloaded barometer correctly, run `barometer --version`
 
 
-## Building binaries (Optional)
+## Compiling from source 
 
-You can also clone and build Burnout Barometer straight from
-[Github](https://github.com/ljvmiranda921/burnout-barometer). The following
+Optionally, you can clone and build the binary straight from [the
+source](https://github.com/ljvmiranda921/burnout-barometer). The following
 steps require [Go 1.11](https://golang.org/doc/go1.11) or above.
 
 First, ensure that [Go Modules](https://github.com/golang/go/wiki/Modules) is enabled:
@@ -54,7 +54,7 @@ First, ensure that [Go Modules](https://github.com/golang/go/wiki/Modules) is en
 export GO111MODULE=on
 ```
 
-Then, you can clone the repository and build the binaries:
+Then, clone the repository and build the binary:
 
 
 ```bash

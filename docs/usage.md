@@ -7,26 +7,12 @@ description: "Usage"
 ---
 
 # Usage
-{: .no_toc}
 
-
-Burnout Barometer can conveniently be used within Slack. Use it for individual
-lifelogging or for measuring your team's health.
+Burnout Barometer can be conveniently used within Slack. Use it for individual
+life-logging or for measuring your team's health.
 {: .fs-6 .fw-300 }
 
-User logs are stored inside a 
+
+## Logging from Slack 
 
 
----
-
-
-## Table of contents
-{: .no_toc .text-delta }
-
-1. TOC
-{:toc}
-
-## Using the Slack application
-
-
-## Using the command-line interface
