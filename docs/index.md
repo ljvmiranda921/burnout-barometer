@@ -26,3 +26,7 @@ team's stress and work life.
 
 ## How it works
 
+
+### What burnout barometer is
+
+### What burnout barometer is not
