@@ -12,6 +12,12 @@ description: "Contributing"
 Contributions are welcome, and they are greatly appreciated! Every
 little bit helps, and credit will always be given.
 {: .fs-6 .fw-300 }
+
+This project is open for contributors! Contibutions can come in the form of
+feature requests, bug fixes, tutorials, documentation, and the like. Please
+file an Issue first before submitting a Pull Request.
+
+
 --- 
 ## Table of contents
 {: .no_toc .text-delta }
