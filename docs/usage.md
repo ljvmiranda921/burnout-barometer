@@ -26,9 +26,9 @@ make your first log by typing:
 ```
 
 Let's break this down into components:
-- **The burnout barometer slash command** (`/barometer`): this could be anything,
-    depending on how you set-up your Slack application, but we highly-recommend
-    using `/barometer` since that we'll be using throughout the documentation.
+- **The burnout barometer slash command** (`/barometer`): this could be anything
+    depending on how you set-up your Slack application. However, we highly-recommend
+    using `/barometer` for consistency throughout the documentation.
 - **Your "mood-level," an integer between 1-5** (`5`): we use this to assign a
     quantitative health-measurement throughout all event logs. Check the next
     section on our recommended approach in assigning numbers to moods.
@@ -40,10 +40,14 @@ Let's break this down into components:
 
 ### On mood-levels
 
-Mood-levels are a great way to (1) **quantitatively assess** what you've felt
-throughout the day and (2) **label your thoughts** and feelings. It is an
-integer between 1 to 5, and the measurement is self-reported. You can interpret the numbers in any way to tailor-fit yourself or your
-organization, but we recommend this as a guide:
+Mood-levels are a great way to:
+
+1. **quantitatively assess** what you've felt throughout the day and 
+2. **label** your thoughts and feelings. 
+
+It is an integer between 1 to 5, and the measurement is self-reported. You can
+interpret the numbers in any way to tailor-fit yourself or your organization,
+but we recommend this as a guide:
 
 | Level | Description                                                                                                                                                                |
 |-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
