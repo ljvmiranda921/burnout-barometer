@@ -6,6 +6,7 @@
 package pkg
 
 import (
+	"fmt"
 	"io/ioutil"
 	"strconv"
 	"testing"
@@ -38,7 +39,7 @@ func TestRequest_Process(t *testing.T) {
 		{
 			name:    "happy path",
 			fields:  fields{Text: "4 hello world", DebugOnly: true, Timestamp: strconv.FormatInt(time.Now().Unix(), 10), Area: "Asia/Manila"},
-			want:    &Message{Text: "Received: 4 (hello world)"},
+			want:    &Message{Text: fmt.Sprintf("%s: 4 (hello world)", ackPrefix)},
 			wantErr: false,
 		},
 		{
@@ -72,7 +73,7 @@ func TestRequest_Process(t *testing.T) {
 				return
 			}
 			if (got != nil) && (got.Text != tt.want.Text) {
-				t.Errorf("Request.Process() = %v, want %v", got, tt.want)
+				t.Errorf("Request.Process() = %v, want %v", got.Text, tt.want.Text)
 			}
 		})
 	}
