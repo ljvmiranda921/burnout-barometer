@@ -6,6 +6,7 @@ package cmd
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -33,19 +34,14 @@ on when running the server. The values can be obtained from the prompt or
 through environment variables (prefixed with 'BB_*').
 
 If you're planning to use environment variables, then use the --use-env-vars
-flag. Be sure that you have set the following:
-
-- BB_PROJECT_ID: the Google Cloud Platform project ID
-- BQ_TABLE: the database URL to store the logs
-- BB_SLACK_TOKEN: the Slack Token for verifying requests
-- BB_AREA: the local area for setting the timestamp
+flag. Find all available options in this link: https://ljvmiranda921.github.io/burnout-barometer/installation/
 `,
 		Example: "barometer init",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			initLogger(verbosity)
 
 			if useEnvVars {
-				cfg, err := getConfigFromEnvs()
+				cfg, err := getConfig(fromEnvVar)
 				if err != nil {
 					return err
 				}
@@ -56,7 +52,7 @@ flag. Be sure that you have set the following:
 				fmt.Printf("Configuration file generated in %s!", outputPath)
 
 			} else {
-				cfg, err := getConfigFromPrompt()
+				cfg, err := getConfig(fromPrompt)
 				if err != nil {
 					return err
 				}
@@ -77,80 +73,119 @@ flag. Be sure that you have set the following:
 	return command
 }
 
-func getConfigFromEnvs() (*pkg.Configuration, error) {
+// Specify all configuration options here. As of now, we can only maintain this
+// by manually checking the struct fields within pkg.Configuration. It may be
+// easier to decouple them instead.
+type opt struct {
+	name     string
+	toEncode bool
 
-	projectID, err := lookupEnvVar("BB_PROJECT_ID")
-	if err != nil {
-		return nil, err
+	// environment-var specific options
+	envVarName string
+
+	// promptui specific options
+	prompt     string
+	defaultVal string
+	mask       bool
+}
+
+var opts = []opt{
+	opt{
+		name:       "PROJECT_ID",
+		toEncode:   false,
+		envVarName: "BB_PROJECT_ID",
+		prompt:     "GCP Project ID",
+		defaultVal: "my-project-id",
+		mask:       false,
+	},
+	opt{
+		name:       "TABLE",
+		toEncode:   false,
+		envVarName: "BB_TABLE",
+		prompt:     "Database URL to store all logs",
+		defaultVal: "bq://my-gcp-project.my-dataset.my-table",
+		mask:       false,
+	},
+	opt{
+		name:       "SLACK_TOKEN",
+		toEncode:   true,
+		envVarName: "BB_SLACK_TOKEN",
+		prompt:     "Slack verification token",
+		defaultVal: "",
+		mask:       true,
+	},
+	opt{
+		name:       "AREA",
+		toEncode:   false,
+		envVarName: "BB_AREA",
+		prompt:     "Where are you? (refer to IANA timezone database)",
+		defaultVal: "Asia/Manila",
+		mask:       false,
+	},
+	opt{
+		name:       "TWITTER_CONSUMER_KEY",
+		toEncode:   true,
+		envVarName: "BB_TWITTER_CONSUMER_KEY",
+		prompt:     "Twitter API Consumer Key",
+		defaultVal: "",
+		mask:       true,
+	},
+	opt{
+		name:       "TWITTER_CONSUMER_SECRET",
+		toEncode:   true,
+		envVarName: "BB_TWITTER_CONSUMER_SECRET",
+		prompt:     "Twitter API Consumer Secret",
+		defaultVal: "",
+		mask:       true,
+	},
+	opt{
+		name:       "TWITTER_ACCESS_KEY",
+		toEncode:   true,
+		envVarName: "BB_TWITTER_ACCESS_KEY",
+		prompt:     "Twitter API Access Key",
+		defaultVal: "",
+		mask:       true,
+	},
+	opt{
+		name:       "TWITTER_ACCESS_SECRET",
+		toEncode:   true,
+		envVarName: "BB_TWITTER_ACCESS_SECRET",
+		prompt:     "Twitter API Access Secret",
+		defaultVal: "",
+		mask:       true,
+	},
+}
+
+func getConfig(fn func(options opt) (string, error)) (*pkg.Configuration, error) {
+	m := make(map[string]interface{})
+	for i := 0; i < len(opts); i++ {
+		val, err := fn(opts[i])
+		if err != nil {
+			return nil, err
+		}
+		m[opts[i].name] = val
 	}
 
-	table, err := lookupEnvVar("BB_TABLE")
-	if err != nil {
-		return nil, err
-	}
-
-	slackToken, err := lookupEnvVar("BB_SLACK_TOKEN")
-	if err != nil {
-		return nil, err
-	}
-	slackTokenEnc := base64.StdEncoding.EncodeToString([]byte(slackToken))
-
-	area, err := lookupEnvVar("BB_AREA")
-	if err != nil {
-		return nil, err
-	}
-
-	config := &pkg.Configuration{
-		ProjectID: projectID,
-		Table:     table,
-		Token:     slackTokenEnc,
-		Area:      area,
-	}
-
+	jsonString, _ := json.Marshal(m) // convert map to json
+	config := &pkg.Configuration{}
+	json.Unmarshal(jsonString, config) // convert json to struct
 	return config, nil
 }
 
-func lookupEnvVar(key string) (string, error) {
-	if value, exists := os.LookupEnv(key); exists {
+func fromEnvVar(options opt) (string, error) {
+	if value, exists := os.LookupEnv(options.envVarName); exists {
+		if options.toEncode {
+			valueEnc := base64.StdEncoding.EncodeToString([]byte(value))
+			return valueEnc, nil
+		}
 		return value, nil
 	}
 
-	err := fmt.Errorf("Cannot find environment variable: %s", key)
+	err := fmt.Errorf("Cannot find environment variable: %s", options.envVarName)
 	return "", err
 }
 
-func getConfigFromPrompt() (*pkg.Configuration, error) {
-	projectID, err := promptString("GCP Project ID", "my-gcp-project", false)
-	if err != nil {
-		return nil, err
-	}
-
-	table, err := promptString("Table to store all logs", "bq://my-gcp-project.my-dataset.my-table", false)
-	if err != nil {
-		return nil, err
-	}
-
-	slackToken, err := promptString("Slack verification token", "", true)
-	if err != nil {
-		return nil, err
-	}
-	slackTokenEnc := base64.StdEncoding.EncodeToString([]byte(slackToken))
-
-	area, err := promptString("Where are you? (Refer to IANA Timezone database)", "Asia/Manila", false)
-	if err != nil {
-		return nil, err
-	}
-
-	config := &pkg.Configuration{
-		ProjectID: projectID,
-		Table:     table,
-		Token:     slackTokenEnc,
-		Area:      area,
-	}
-	return config, nil
-}
-
-func promptString(name string, defaultVal string, mask bool) (string, error) {
+func fromPrompt(options opt) (string, error) {
 
 	var prompt promptui.Prompt
 
@@ -161,20 +196,30 @@ func promptString(name string, defaultVal string, mask bool) (string, error) {
 		return nil
 	}
 
-	if mask {
+	if options.mask {
 		prompt = promptui.Prompt{
-			Label:    name,
-			Default:  defaultVal,
+			Label:    options.prompt,
+			Default:  options.defaultVal,
 			Validate: validate,
 			Mask:     '*',
 		}
 	} else {
 		prompt = promptui.Prompt{
-			Label:    name,
-			Default:  defaultVal,
+			Label:    options.prompt,
+			Default:  options.defaultVal,
 			Validate: validate,
 		}
 	}
 
-	return prompt.Run()
+	value, err := prompt.Run()
+	if err != nil {
+		return "", nil
+	}
+
+	if options.toEncode {
+		valueEnc := base64.StdEncoding.EncodeToString([]byte(value))
+		return valueEnc, nil
+	}
+
+	return value, nil
 }
