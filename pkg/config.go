@@ -18,6 +18,13 @@ type Configuration struct {
 	Table     string `json:"TABLE"`       // Database URL
 	Token     string `json:"SLACK_TOKEN"` // Slack token provided by the app for verification
 	Area      string `json:"AREA"`        // IANA-compliant area
+
+	// This defines the API keys for accessing the Twitter API
+	// and get messages from the tiny-care bots
+	TwitterConsumerKey    string `json:"TWITTER_CONSUMER_KEY"`
+	TwitterConsumerSecret string `json:"TWITTER_CONSUMER_SECRET"`
+	TwitterAccessKey      string `json:"TWITTER_ACCESS_KEY"`
+	TwitterAccessSecret   string `json:"TWITTER_ACCESS_SECRET"`
 }
 
 // WriteConfiguration creates a configuration file at a given output path.
