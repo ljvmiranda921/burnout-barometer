@@ -11,5 +11,6 @@ require (
 	github.com/manifoldco/promptui v0.6.0
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cobra v0.0.5
+	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	mellium.im/sasl v0.2.1 // indirect
 )
