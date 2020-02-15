@@ -8,6 +8,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"os"
+	"reflect"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -46,6 +47,13 @@ func (cfg *Configuration) WriteConfiguration(outputPath string) error {
 	return nil
 }
 
+func (cfg *Configuration) update(field string, value string) {
+	v := reflect.ValueOf(cfg).Elem().FieldByName(field)
+	if v.IsValid() {
+		v.SetString(value)
+	}
+}
+
 // ReadConfiguration reads the configuration file and returns an instance
 // of a Configuration.
 func ReadConfiguration(cfgPath string) (*Configuration, error) {
@@ -65,15 +73,25 @@ func ReadConfiguration(cfgPath string) (*Configuration, error) {
 		return nil, err
 	}
 
-	log.Tracef("%v", config)
-
-	// Decode `SLACK_TOKEN`
-	slackToken, err := base64.StdEncoding.DecodeString(config.Token)
-	if err != nil {
-		log.WithFields(log.Fields{"err": err}).Fatal("base64.StdEncoding.DecodeString")
-		return nil, err
+	// Decode secrets
+	secretFields := []string{
+		"Token",
+		"TwitterConsumerKey",
+		"TwitterConsumerSecret",
+		"TwitterAccessKey",
+		"TwitterAccessSecret",
 	}
-	config.Token = string(slackToken)
 
+	for _, field := range secretFields {
+		v := reflect.ValueOf(*config)
+		enc := v.FieldByName(field).String()
+		dec, err := base64.StdEncoding.DecodeString(enc)
+		if err != nil {
+			log.WithFields(log.Fields{"err": err}).Fatal("base64.StdEncoding.DecodeString")
+			return nil, err
+		}
+
+		config.update(field, string(dec))
+	}
 	return config, nil
 }
