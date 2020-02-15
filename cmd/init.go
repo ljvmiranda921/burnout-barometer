@@ -6,6 +6,7 @@ package cmd
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -79,39 +80,42 @@ flag. Be sure that you have set the following:
 
 func getConfigFromEnvs() (*pkg.Configuration, error) {
 
-	projectID, err := lookupEnvVar("BB_PROJECT_ID")
-	if err != nil {
-		return nil, err
+	type env struct {
+		name     string
+		toEncode bool
 	}
 
-	table, err := lookupEnvVar("BB_TABLE")
-	if err != nil {
-		return nil, err
+	envs := []env{
+		env{"BB_PROJECT_ID", false},
+		env{"BB_TABLE", false},
+		env{"BB_SLACK_TOKEN", true},
+		env{"BB_AREA", false},
 	}
 
-	slackToken, err := lookupEnvVar("BB_SLACK_TOKEN")
-	if err != nil {
-		return nil, err
-	}
-	slackTokenEnc := base64.StdEncoding.EncodeToString([]byte(slackToken))
+	m := make(map[string]interface{})
+	for i := 0; i < len(envs); i++ {
+		val, err := lookupEnvVar(envs[i].name, envs[i].toEncode)
+		if err != nil {
+			return nil, err
+		}
 
-	area, err := lookupEnvVar("BB_AREA")
-	if err != nil {
-		return nil, err
+		// create a map
+		m[strings.TrimPrefix(envs[i].name, "BB_")] = val
 	}
 
-	config := &pkg.Configuration{
-		ProjectID: projectID,
-		Table:     table,
-		Token:     slackTokenEnc,
-		Area:      area,
-	}
+	jsonString, _ := json.Marshal(m) // convert map to json
+	config := &pkg.Configuration{}
+	json.Unmarshal(jsonString, config) // convert json to struct
 
 	return config, nil
 }
 
-func lookupEnvVar(key string) (string, error) {
+func lookupEnvVar(key string, encode bool) (string, error) {
 	if value, exists := os.LookupEnv(key); exists {
+		if encode {
+			valueEnc := base64.StdEncoding.EncodeToString([]byte(value))
+			return valueEnc, nil
+		}
 		return value, nil
 	}
 
