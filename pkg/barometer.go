@@ -7,21 +7,29 @@ package pkg
 
 import (
 	"fmt"
+	"math/rand"
 	"strconv"
 	"strings"
 	"time"
 
 	"cloud.google.com/go/bigquery"
+	"github.com/dghubble/go-twitter/twitter"
 	log "github.com/sirupsen/logrus"
+)
+
+const (
+	defaultMessage = "Thank you for trusting me"
+	ackPrefix      = "Gotcha, I logged your mood"
 )
 
 // Request defines the common form parameters when a slash command is invoked.
 type Request struct {
-	Text      string   // The submitted text in the slash command
-	UserID    string   // Slack User ID that submitted the request
-	Timestamp string   // Timestamp of the request
-	Area      string   // IANA-compliant area
-	DB        Database // Database to insert into
+	Text          string          // The submitted text in the slash command
+	UserID        string          // Slack User ID that submitted the request
+	Timestamp     string          // Timestamp of the request
+	Area          string          // IANA-compliant area
+	DB            Database        // Database to insert into
+	TwitterClient *twitter.Client // Twitter client
 
 	// If set to true, then the Process() method will not insert into the
 	// database. The resulting Message is just returned.
@@ -55,10 +63,11 @@ func (r *Request) Process() (*Message, error) {
 	}
 
 	r.item = logItem{
-		Timestamp:  ts,
-		UserID:     r.UserID,
-		LogMeasure: measure,
-		Notes:      notes,
+		Timestamp:     ts,
+		UserID:        r.UserID,
+		LogMeasure:    measure,
+		Notes:         notes,
+		TwitterClient: r.TwitterClient,
 	}
 
 	if r.DebugOnly {
@@ -110,10 +119,11 @@ func (r *Request) insertToTable() error {
 // logItem is the user log for the barometer. This also serves as
 // the schema for the database.
 type logItem struct {
-	Timestamp  time.Time
-	UserID     string
-	LogMeasure int
-	Notes      string
+	Timestamp     time.Time
+	UserID        string
+	LogMeasure    int
+	Notes         string
+	TwitterClient *twitter.Client
 }
 
 // Save allows us to implement BigQuery's ValueSaver interface.
@@ -128,19 +138,44 @@ func (i *logItem) Save() (map[string]bigquery.Value, string, error) {
 
 // formatReply prepares the Slack message as a response to a slash command.
 func (i *logItem) formatReply() (*Message, error) {
+	var text string
+	if i.TwitterClient != nil {
+		text = i.fetchTwitterMessage("tinycarebot", 20)
+	} else {
+		text = defaultMessage
+	}
+
 	attach := Attachment{
 		Color: "#ef4631",
-		Title: "Burnout Barometer",
-		Text:  fmt.Sprintf("Acknowledged"),
+		Title: "Here's your message from Burnout Barometer",
+		Text:  text,
 	}
 
 	msg := &Message{
 		ResponseType: "ephemeral",
-		Text:         fmt.Sprintf("Received: %d (%s)", i.LogMeasure, i.Notes),
+		Text:         fmt.Sprintf("%s: %d (%s)", ackPrefix, i.LogMeasure, i.Notes),
 		Attachments:  []Attachment{attach},
 	}
 
 	return msg, nil
+}
+
+// fetchTwitterMessage gets N number of the latest tweets from a username (preferably, tinycarebot)
+func (i *logItem) fetchTwitterMessage(screenName string, count int) string {
+	tweets, resp, err := i.TwitterClient.Timelines.UserTimeline(&twitter.UserTimelineParams{
+		ScreenName: screenName,
+		Count:      count,
+	})
+
+	if err != nil || resp.StatusCode != 200 {
+		return defaultMessage
+	}
+
+	// Choose a random tweet from tinycarebot
+	rand.Seed(time.Now().Unix())
+	tweet := tweets[rand.Intn(len(tweets))]
+	text := fmt.Sprintf("%s (@%s)", tweet.FullText, screenName)
+	return text
 }
 
 // Message is the Slack message event. see
