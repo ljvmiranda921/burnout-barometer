@@ -4,6 +4,7 @@ go 1.12
 
 require (
 	cloud.google.com/go/bigquery v1.3.0
+	github.com/dghubble/go-twitter v0.0.0-20190719072343-39e5462e111f // indirect
 	github.com/go-pg/pg v8.0.6+incompatible
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/julienschmidt/httprouter v1.3.0
