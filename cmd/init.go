@@ -85,11 +85,16 @@ func getConfigFromEnvs() (*pkg.Configuration, error) {
 		toEncode bool
 	}
 
+	// List all environment variables with BB_ prefix
 	envs := []env{
 		env{"BB_PROJECT_ID", false},
 		env{"BB_TABLE", false},
 		env{"BB_SLACK_TOKEN", true},
 		env{"BB_AREA", false},
+		env{"BB_TWITTER_CONSUMER_KEY", true},
+		env{"BB_TWITTER_CONSUMER_SECRET", true},
+		env{"BB_TWITTER_ACCESS_KEY", true},
+		env{"BB_TWITTER_ACCESS_SECRET", true},
 	}
 
 	m := make(map[string]interface{})
@@ -98,15 +103,12 @@ func getConfigFromEnvs() (*pkg.Configuration, error) {
 		if err != nil {
 			return nil, err
 		}
-
-		// create a map
 		m[strings.TrimPrefix(envs[i].name, "BB_")] = val
 	}
 
 	jsonString, _ := json.Marshal(m) // convert map to json
 	config := &pkg.Configuration{}
 	json.Unmarshal(jsonString, config) // convert json to struct
-
 	return config, nil
 }
 
