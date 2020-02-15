@@ -10,8 +10,11 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/dghubble/go-twitter/twitter"
 	"github.com/julienschmidt/httprouter"
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/clientcredentials"
 )
 
 // Server implements the Optserve server to be run inside the cluster.
@@ -98,14 +101,34 @@ func (s *Server) handleLog() http.HandlerFunc {
 			return
 		}
 
+		// Create Twitter client
+		var client *twitter.Client
+		if tc := s.Config; containsEmpty(
+			tc.TwitterConsumerKey,
+			tc.TwitterConsumerSecret,
+			tc.TwitterAccessKey,
+			tc.TwitterAccessSecret,
+		) {
+			client = nil
+		} else {
+			config := &clientcredentials.Config{
+				ClientID:     s.Config.TwitterConsumerKey,
+				ClientSecret: s.Config.TwitterConsumerSecret,
+				TokenURL:     "https://api.twitter.com/oauth2/token",
+			}
+			httpClient := config.Client(oauth2.NoContext)
+			client = twitter.NewClient(httpClient)
+		}
+
 		// Process the request
 		req := &Request{
-			Text:      r.FormValue("text"),
-			UserID:    r.FormValue("user_id"),
-			Timestamp: r.Header.Get("X-Slack-Request-Timestamp"),
-			Area:      s.Config.Area,
-			DB:        s.database,
-			DebugOnly: s.DebugOnly,
+			Text:          r.FormValue("text"),
+			UserID:        r.FormValue("user_id"),
+			Timestamp:     r.Header.Get("X-Slack-Request-Timestamp"),
+			Area:          s.Config.Area,
+			DB:            s.database,
+			TwitterClient: client,
+			DebugOnly:     s.DebugOnly,
 		}
 
 		resp, err := req.Process()
@@ -122,6 +145,15 @@ func (s *Server) handleLog() http.HandlerFunc {
 		// Send reply back to Slack
 		json.NewEncoder(w).Encode(resp)
 	}
+}
+
+func containsEmpty(ss ...string) bool {
+	for _, s := range ss {
+		if s == "" {
+			return true
+		}
+	}
+	return false
 }
 
 // VerifyWebhook checks if the submitted request matches the token provided by Slack
