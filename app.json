@@ -17,6 +17,22 @@
             "description": "IANA-compliant area for timezone",
             "value": "Asia/Manila",
             "required": true
+        },
+        "BB_TWITTER_CONSUMER_KEY": {
+            "description": "your Twitter consumer key",
+            "required": true
+        },
+        "BB_TWITTER_CONSUMER_SECRET": {
+            "description": "your Twitter consumer secret",
+            "required": true
+        },
+        "BB_TWITTER_ACCESS_KEY": {
+            "description": "your Twitter access key",
+            "required": true
+        },
+        "BB_TWITTER_ACCESS_SECRET": {
+            "description": "your Twitter access secret",
+            "required": true
         }
     },
     "options": {
