@@ -10,8 +10,11 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/dghubble/go-twitter/twitter"
 	"github.com/ljvmiranda921/burnout-barometer/pkg"
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/clientcredentials"
 )
 
 // BurnoutBarometerFn is a Cloud Function that takes a log message from a Slack
@@ -43,17 +46,37 @@ func BurnoutBarometerFn(w http.ResponseWriter, r *http.Request) {
 		log.Fatal("empty text in form")
 	}
 
+	// Create Twitter client
+	var client *twitter.Client
+	if tc := config; pkg.ContainsEmpty(
+		tc.TwitterConsumerKey,
+		tc.TwitterConsumerSecret,
+		tc.TwitterAccessKey,
+		tc.TwitterAccessSecret,
+	) {
+		client = nil
+	} else {
+		twitterConfig := &clientcredentials.Config{
+			ClientID:     config.TwitterConsumerKey,
+			ClientSecret: config.TwitterConsumerSecret,
+			TokenURL:     "https://api.twitter.com/oauth2/token",
+		}
+		httpClient := twitterConfig.Client(oauth2.NoContext)
+		client = twitter.NewClient(httpClient)
+	}
+
 	// Store the message and timestamp to BigQuery
 	db, err := pkg.NewDatabase(config.Table)
 	if err != nil {
 		log.WithFields(log.Fields{"err": err}).Fatal("NewDatabase")
 	}
 	req := &pkg.Request{
-		Text:      r.Form["text"][0],
-		UserID:    r.Form["user_id"][0],
-		Timestamp: r.Header.Get("X-Slack-Request-Timestamp"),
-		Area:      config.Area,
-		DB:        db,
+		Text:          r.Form["text"][0],
+		UserID:        r.Form["user_id"][0],
+		Timestamp:     r.Header.Get("X-Slack-Request-Timestamp"),
+		Area:          config.Area,
+		DB:            db,
+		TwitterClient: client,
 	}
 
 	resp, err := req.Process()
