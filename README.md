@@ -4,6 +4,7 @@
 A Slack tool to log, track, and assess you or your team's stress and work-life.
 
 <!-- TODO: Put GIF here -->
+![](docs/assets/demo.gif)
 
 
 **Want to get started?** [**Download the burnout barometer**](https://ljvmiranda921.github.io/burnout-barometer/download/) or just:
