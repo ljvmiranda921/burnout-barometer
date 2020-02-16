@@ -140,7 +140,7 @@ func (i *logItem) Save() (map[string]bigquery.Value, string, error) {
 func (i *logItem) formatReply() (*Message, error) {
 	var text string
 	if i.TwitterClient != nil {
-		text = i.fetchTwitterMessage("tinycarebot", 20)
+		text = i.fetchTwitterMessage("tinycarebot", 20, true)
 	} else {
 		text = defaultMessage
 	}
@@ -161,20 +161,24 @@ func (i *logItem) formatReply() (*Message, error) {
 }
 
 // fetchTwitterMessage gets N number of the latest tweets from a username (preferably, tinycarebot)
-func (i *logItem) fetchTwitterMessage(screenName string, count int) string {
+func (i *logItem) fetchTwitterMessage(screenName string, count int, userOnly bool) string {
+	log.WithFields(log.Fields{"username": screenName}).Trace("fetching tweet")
 	tweets, resp, err := i.TwitterClient.Timelines.UserTimeline(&twitter.UserTimelineParams{
-		ScreenName: screenName,
-		Count:      count,
+		ScreenName:     screenName,
+		Count:          count,
+		ExcludeReplies: &userOnly,
 	})
 
 	if err != nil || resp.StatusCode != 200 {
+		log.Tracef("fetch unsuccessful: %v", err)
 		return defaultMessage
 	}
 
 	// Choose a random tweet from tinycarebot
 	rand.Seed(time.Now().Unix())
 	tweet := tweets[rand.Intn(len(tweets))]
-	text := fmt.Sprintf("%s (@%s)", tweet.FullText, screenName)
+	log.Tracef("status (%s), tweet: %s", resp.Status, tweet.Text)
+	text := fmt.Sprintf("%s (@%s)", tweet.Text, screenName)
 	return text
 }
 
