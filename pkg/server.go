@@ -103,7 +103,7 @@ func (s *Server) handleLog() http.HandlerFunc {
 
 		// Create Twitter client
 		var client *twitter.Client
-		if tc := s.Config; containsEmpty(
+		if tc := s.Config; ContainsEmpty(
 			tc.TwitterConsumerKey,
 			tc.TwitterConsumerSecret,
 			tc.TwitterAccessKey,
@@ -147,7 +147,8 @@ func (s *Server) handleLog() http.HandlerFunc {
 	}
 }
 
-func containsEmpty(ss ...string) bool {
+// ContainsEmpty checks if an array of strings contains an empty string.
+func ContainsEmpty(ss ...string) bool {
 	for _, s := range ss {
 		if s == "" {
 			return true
