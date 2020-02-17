@@ -90,6 +90,7 @@ type opt struct {
 }
 
 var opts = []opt{
+	// TODO: Remove PROJECT_ID
 	opt{
 		name:       "PROJECT_ID",
 		toEncode:   false,

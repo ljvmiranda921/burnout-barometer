@@ -15,6 +15,7 @@ import (
 
 // Configuration contains all important settings for running the command.
 type Configuration struct {
+	// TODO: Remove ProjectID
 	ProjectID string `json:"PROJECT_ID"`  // GCP Project ID
 	Table     string `json:"TABLE"`       // Database URL
 	Token     string `json:"SLACK_TOKEN"` // Slack token provided by the app for verification

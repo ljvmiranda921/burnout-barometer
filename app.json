@@ -1,6 +1,7 @@
 {
     "name": "burnout-barometer",
     "env": {
+        // TODO: Remove PROJECT_ID
         "BB_PROJECT_ID": {
             "description": "project ID for easy-access of resources",
             "required": true
