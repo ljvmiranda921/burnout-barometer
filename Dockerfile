@@ -22,9 +22,7 @@ COPY --from=builder /app/build/barometer .
 COPY --from=builder /app/docker-entrypoint.sh .
 
 # Setup environment variables
-# TODO: Remove Project ID
 ENV PORT=8080  \
-    BB_PROJECT_ID= \
     BB_TABLE= \
     BB_SLACK_TOKEN= \
     BB_AREA= \
