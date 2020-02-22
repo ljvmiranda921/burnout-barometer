@@ -1,3 +1,6 @@
+4d63.com/embedfiles v0.0.0-20190311033909-995e0740726f/go.mod h1:HxEsUxoVZyRxsZML/S6e2xAuieFMlGO0756ncWx1aXE=
+4d63.com/tz v1.1.0 h1:Hi58WbeFjiUH4XOWuCpl5iSzuUuw1axZzTqIfMKPKrg=
+4d63.com/tz v1.1.0/go.mod h1:SHGqVdL7hd2ZaX2T9uEiOZ/OFAUfCCLURdLPJsd8ZNs=
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.38.0/go.mod h1:990N+gfupTy94rShfmMCWGDn0LpTmnzTp2qbd1dvSRU=
@@ -77,8 +80,8 @@ github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxv
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
-github.com/ljvmiranda921/burnout-barometer v1.0.0-alpha.6 h1:82YlkvB/i6nlMNd2x6LQPgjcIYiTKOyQMncTQvYk8Yc=
-github.com/ljvmiranda921/burnout-barometer v1.0.0-alpha.6/go.mod h1:8SYtg5xvKRkDA6JVLX3aebBSH3r2ng3gBWY1vINtVEk=
+github.com/ljvmiranda921/burnout-barometer v1.0.0-beta.0 h1:o1FAronE52ItoDeyjIpFrWAQqpXNzhsjFTMcGgUrnNA=
+github.com/ljvmiranda921/burnout-barometer v1.0.0-beta.0/go.mod h1:ZHkgbSAcMcOLibh2fHAjUlgeJWkV56a/X2DtpFzHCzs=
 github.com/lunixbochs/vtclean v0.0.0-20180621232353-2d01aacdc34a/go.mod h1:pHhQNgMf3btfWnGBVipUOjRYhoOsdGqdm/+2c2E2WMI=
 github.com/magiconair/properties v1.8.0/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
 github.com/manifoldco/promptui v0.6.0/go.mod h1:o9/C5VV8IPXxjxpl9au84MtQGIi5dwn7eldAgEdePPs=
