@@ -1,10 +1,6 @@
 {
     "name": "burnout-barometer",
     "env": {
-        "BB_PROJECT_ID": {
-            "description": "project ID for easy-access of resources",
-            "required": true
-        },
         "BB_TABLE": {
             "description": "database connection URL to store logs",
             "required": true
