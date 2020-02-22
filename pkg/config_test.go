@@ -74,7 +74,7 @@ func TestReadConfiguration(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			got, err := ReadConfiguration(tt.args.cfgPath)
+			_, err := ReadConfiguration(tt.args.cfgPath)
 
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ReadConfiguration() error = %v, wantErr %v", err, tt.wantErr)
