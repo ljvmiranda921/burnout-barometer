@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"4d63.com/tz"
 	"cloud.google.com/go/bigquery"
 	"github.com/dghubble/go-twitter/twitter"
 	log "github.com/sirupsen/logrus"
@@ -97,7 +98,7 @@ func (r *Request) getTimestamp() (time.Time, error) {
 		log.Errorf("cannot parse timestamp %s: %v", r.Timestamp, err)
 		return time.Time{}, err
 	}
-	loc, err := time.LoadLocation(r.Area)
+	loc, err := tz.LoadLocation(r.Area)
 	if err != nil {
 		log.Errorf("cannot find location: %s", r.Area)
 		return time.Time{}, err
