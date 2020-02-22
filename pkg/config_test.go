@@ -14,10 +14,9 @@ import (
 
 func TestConfiguration_WriteConfiguration(t *testing.T) {
 	type fields struct {
-		ProjectID string
-		Table     string
-		Token     string
-		Area      string
+		Table string
+		Token string
+		Area  string
 	}
 	type args struct {
 		outputPath string
@@ -30,7 +29,7 @@ func TestConfiguration_WriteConfiguration(t *testing.T) {
 	}{
 		{
 			name:    "file exists after creation",
-			fields:  fields{ProjectID: "test-project", Table: "test-table", Token: "test-token", Area: "test-area"},
+			fields:  fields{Table: "test-table", Token: "test-token", Area: "test-area"},
 			args:    args{outputPath: "test_file.json"},
 			wantErr: false,
 		},
@@ -38,10 +37,9 @@ func TestConfiguration_WriteConfiguration(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			cfg := &Configuration{
-				ProjectID: tt.fields.ProjectID,
-				Table:     tt.fields.Table,
-				Token:     tt.fields.Token,
-				Area:      tt.fields.Area,
+				Table: tt.fields.Table,
+				Token: tt.fields.Token,
+				Area:  tt.fields.Area,
 			}
 			if err := cfg.WriteConfiguration(tt.args.outputPath); (err != nil) != tt.wantErr {
 				t.Errorf("Configuration.WriteConfiguration() error = %v, wantErr %v", err, tt.wantErr)
@@ -69,7 +67,7 @@ func TestReadConfiguration(t *testing.T) {
 		{
 			name:    "happy path read config",
 			args:    args{cfgPath: "testdata/test_happy_path_read_config.json"},
-			want:    &Configuration{ProjectID: "test-project", Table: "bq://test-table", Token: "ZK[VPIHE9E2CIMAz0QUE", Area: "Asia/Manila"},
+			want:    &Configuration{Table: "bq://test-table", Token: "ZK[VPIHE9E2CIMAz0QUE", Area: "Asia/Manila"},
 			wantErr: false,
 		},
 	}
@@ -81,9 +79,6 @@ func TestReadConfiguration(t *testing.T) {
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ReadConfiguration() error = %v, wantErr %v", err, tt.wantErr)
 				return
-			}
-			if tt.want.ProjectID != got.ProjectID {
-				t.Errorf("ReadConfiguration() = %v, want %v", got.ProjectID, tt.want.ProjectID)
 			}
 		})
 	}
@@ -102,10 +97,9 @@ func ExampleReadConfiguration() {
 func ExampleConfiguration_WriteConfiguration() {
 	// Create a sample configuration
 	config := &Configuration{
-		ProjectID: "my-project-id",
-		Table:     "bq://my-project.my-dataset.my-table",
-		Token:     "M4KY3LOVPIhE9E2zIMAz0QUE",
-		Area:      "Asia/Manila",
+		Table: "bq://my-project.my-dataset.my-table",
+		Token: "M4KY3LOVPIhE9E2zIMAz0QUE",
+		Area:  "Asia/Manila",
 	}
 
 	err := config.WriteConfiguration("path/to/config.json")
