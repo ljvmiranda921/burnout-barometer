@@ -15,11 +15,9 @@ import (
 
 // Configuration contains all important settings for running the command.
 type Configuration struct {
-	// TODO: Remove ProjectID
-	ProjectID string `json:"PROJECT_ID"`  // GCP Project ID
-	Table     string `json:"TABLE"`       // Database URL
-	Token     string `json:"SLACK_TOKEN"` // Slack token provided by the app for verification
-	Area      string `json:"AREA"`        // IANA-compliant area
+	Table string `json:"TABLE"`       // Database URL
+	Token string `json:"SLACK_TOKEN"` // Slack token provided by the app for verification
+	Area  string `json:"AREA"`        // IANA-compliant area
 
 	// This defines the API keys for accessing the Twitter API
 	// and get messages from the tiny-care bots
@@ -44,7 +42,6 @@ func (cfg *Configuration) WriteConfiguration(outputPath string) error {
 		log.WithFields(log.Fields{"err": err}).Fatal("json.NewEncoder.Encode")
 		return err
 	}
-
 	return nil
 }
 
