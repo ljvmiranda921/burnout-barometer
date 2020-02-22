@@ -90,15 +90,6 @@ type opt struct {
 }
 
 var opts = []opt{
-	// TODO: Remove PROJECT_ID
-	opt{
-		name:       "PROJECT_ID",
-		toEncode:   false,
-		envVarName: "BB_PROJECT_ID",
-		prompt:     "GCP Project ID",
-		defaultVal: "my-project-id",
-		mask:       false,
-	},
 	opt{
 		name:       "TABLE",
 		toEncode:   false,
