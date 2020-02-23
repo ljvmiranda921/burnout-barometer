@@ -24,7 +24,7 @@ team's stress and work-life.
 * Easy to set-up and deployable in a severless fashion (Cloud Run, FaaS, etc.)
 
 Learn more about this project in the
-[documentation](ljvmiranda921.github.io/burnout-barometer/)!
+[documentation](https://ljvmiranda921.github.io/burnout-barometer/)!
 
 ## Contributing 
 
