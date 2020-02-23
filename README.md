@@ -1,4 +1,4 @@
-![](docs/assets/gopher.png)
+<h1 align="center"><img alt="barometer-logo" src="docs/assets/gopher.png" height=240/></h1>
 
 # burnout-barometer [![Build Status](https://dev.azure.com/ljvmiranda/ljvmiranda/_apis/build/status/ljvmiranda921.burnout-barometer?branchName=master)](https://dev.azure.com/ljvmiranda/ljvmiranda/_build/latest?definitionId=6&branchName=master) [![Go Report Card](https://goreportcard.com/badge/github.com/ljvmiranda921/burnout-barometer)](https://goreportcard.com/report/github.com/ljvmiranda921/burnout-barometer) [![GoDoc](https://godoc.org/github.com/ljvmiranda921/burnout-barometer?status.svg)](https://godoc.org/github.com/ljvmiranda921/burnout-barometer) 
 
