@@ -48,7 +48,7 @@ func (s *Server) Start() error {
 	}
 	s.database = db
 
-	http.ListenAndServe(fmt.Sprintf(":%d", s.Port), s.Router)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", s.Port), s.Router))
 	return nil
 }
 

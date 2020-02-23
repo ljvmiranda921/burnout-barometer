@@ -11,7 +11,6 @@ import (
 )
 
 var verbosity int
-var config string
 
 // NewCommand returns a new instance of an optserve command.
 func NewCommand() *cobra.Command {
