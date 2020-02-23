@@ -10,7 +10,6 @@
 **Burnout Barometer** is a Slack tool to log, track, and assess you or your
 team's stress and work-life.
 
-
 ![](docs/assets/demo.gif)
 
 
@@ -23,6 +22,9 @@ team's stress and work-life.
 * Track your emotional state straight from Slack
 * Log events are stored and tracked in Postgres or BigQuery
 * Easy to set-up and deployable in a severless fashion (Cloud Run, FaaS, etc.)
+
+Learn more about this project in the
+[documentation](ljvmiranda921.github.io/burnout-barometer/)!
 
 ## Contributing 
 
