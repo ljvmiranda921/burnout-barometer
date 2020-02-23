@@ -1,11 +1,15 @@
 <p align="center"><img alt="barometer-logo" src="docs/assets/gopher.png" height=320/></p>
+<p align="center">
+    <a href="https://dev.azure.com/ljvmiranda/ljvmiranda/_build/latest?definitionId=6&branchName=master"><img src="https://dev.azure.com/ljvmiranda/ljvmiranda/_apis/build/status/ljvmiranda921.burnout-barometer?branchName=master"></img></a>
+    <a href="https://goreportcard.com/report/github.com/ljvmiranda921/burnout-barometer"><img src="https://goreportcard.com/badge/github.com/ljvmiranda921/burnout-barometer"></img></a>
+    <a href="https://godoc.org/github.com/ljvmiranda921/burnout-barometer"><img src="https://godoc.org/github.com/ljvmiranda921/burnout-barometer?status.svg"></img></a>
+    <a href="https://golangci.com"><img src="https://golangci.com/badges/github.com/ljvmiranda921/burnout-barometer.svg"></img></a>
+</p>
 
-# burnout-barometer [![Build Status](https://dev.azure.com/ljvmiranda/ljvmiranda/_apis/build/status/ljvmiranda921.burnout-barometer?branchName=master)](https://dev.azure.com/ljvmiranda/ljvmiranda/_build/latest?definitionId=6&branchName=master) [![Go Report Card](https://goreportcard.com/badge/github.com/ljvmiranda921/burnout-barometer)](https://goreportcard.com/report/github.com/ljvmiranda921/burnout-barometer) [![GoDoc](https://godoc.org/github.com/ljvmiranda921/burnout-barometer?status.svg)](https://godoc.org/github.com/ljvmiranda921/burnout-barometer) 
 
+**Burnout Barometer** is a Slack tool to log, track, and assess you or your
+team's stress and work-life.
 
-A Slack tool to log, track, and assess you or your team's stress and work-life.
-
-<!-- TODO: Put GIF here -->
 ![](docs/assets/demo.gif)
 
 
@@ -18,6 +22,9 @@ A Slack tool to log, track, and assess you or your team's stress and work-life.
 * Track your emotional state straight from Slack
 * Log events are stored and tracked in Postgres or BigQuery
 * Easy to set-up and deployable in a severless fashion (Cloud Run, FaaS, etc.)
+
+Learn more about this project in the
+[documentation](https://ljvmiranda921.github.io/burnout-barometer/)!
 
 ## Contributing 
 
