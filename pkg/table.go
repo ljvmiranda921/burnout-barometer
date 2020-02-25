@@ -50,8 +50,6 @@ func NewDatabase(dburl string) (Database, error) {
 type bigQuery struct {
 	URL    string
 	Config *url.URL
-
-	project, dataset, table string
 }
 
 func (t *bigQuery) GetURL() *url.URL {
