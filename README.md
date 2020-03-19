@@ -3,7 +3,6 @@
     <a href="https://dev.azure.com/ljvmiranda/ljvmiranda/_build/latest?definitionId=6&branchName=master"><img src="https://dev.azure.com/ljvmiranda/ljvmiranda/_apis/build/status/ljvmiranda921.burnout-barometer?branchName=master"></img></a>
     <a href="https://goreportcard.com/report/github.com/ljvmiranda921/burnout-barometer"><img src="https://goreportcard.com/badge/github.com/ljvmiranda921/burnout-barometer"></img></a>
     <a href="https://godoc.org/github.com/ljvmiranda921/burnout-barometer"><img src="https://godoc.org/github.com/ljvmiranda921/burnout-barometer?status.svg"></img></a>
-    <a href="https://golangci.com"><img src="https://golangci.com/badges/github.com/ljvmiranda921/burnout-barometer.svg"></img></a>
 </p>
 
 
