@@ -70,6 +70,24 @@ func TestReadConfiguration(t *testing.T) {
 			want:    &Configuration{Table: "bq://test-table", Token: "ZK[VPIHE9E2CIMAz0QUE", Area: "Asia/Manila"},
 			wantErr: false,
 		},
+		{
+			name:    "config does not exist",
+			args:    args{cfgPath: "testdata/does_not_exist_config.json"},
+			want:    &Configuration{},
+			wantErr: true,
+		},
+		{
+			name:    "faulty config file",
+			args:    args{cfgPath: "testdata/test_faulty_config_file.json"},
+			want:    &Configuration{},
+			wantErr: true,
+		},
+		{
+			name:    "improperly encoded token",
+			args:    args{cfgPath: "testdata/test_faulty_base64_decode.json"},
+			want:    &Configuration{},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
