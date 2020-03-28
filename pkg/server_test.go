@@ -73,9 +73,10 @@ func TestServer_handleLog(t *testing.T) {
 		text, userID, token string
 	}
 	tests := []struct {
-		name   string
-		data   data
-		fields fields
+		name    string
+		data    data
+		fields  fields
+		wantErr bool
 	}{
 		{
 			name: "happy path",
@@ -85,6 +86,27 @@ func TestServer_handleLog(t *testing.T) {
 				DebugOnly: true,
 				Config:    &Configuration{Token: "testToken", Area: "Asia/Manila"},
 			},
+			wantErr: false,
+		},
+		{
+			name: "non-matching webhook",
+			data: data{text: "4 hello world", userID: "testUser", token: "diffToken"},
+			fields: fields{
+				Port:      8080,
+				DebugOnly: true,
+				Config:    &Configuration{Token: "testToken", Area: "Asia/Manila"},
+			},
+			wantErr: true,
+		},
+		{
+			name: "error in processing request",
+			data: data{text: "A hello world", userID: "testUser", token: "testToken"},
+			fields: fields{
+				Port:      8080,
+				DebugOnly: true,
+				Config:    &Configuration{Token: "testToken", Area: "Asia/Manila"},
+			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -125,9 +147,16 @@ func TestServer_handleLog(t *testing.T) {
 			}
 			defer res.Body.Close()
 
-			// Test proper
-			if res.StatusCode != http.StatusOK {
-				t.Errorf("expected status OK; got %v", res.Status)
+			if tt.wantErr {
+				// Test proper if we expect an error
+				if res.StatusCode == http.StatusOK {
+					t.Errorf("expected status not OK, got %v", res.Status)
+				}
+			} else {
+				// Test proper if we want an OK status
+				if res.StatusCode != http.StatusOK {
+					t.Errorf("expected status OK; got %v", res.Status)
+				}
 			}
 
 			b, err := ioutil.ReadAll(res.Body)
@@ -135,6 +164,26 @@ func TestServer_handleLog(t *testing.T) {
 				t.Fatalf("could not read response: %v", err)
 			}
 			t.Logf("received response: %s", string(b))
+		})
+	}
+}
+
+func TestContainsEmpty(t *testing.T) {
+	tests := []struct {
+		name     string
+		args     []string
+		expected bool
+	}{
+		{"not empty", []string{"a", "b", "c"}, false},
+		{"contains empty", []string{"", "b", "c"}, true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			v := ContainsEmpty(tt.args...)
+			if v != tt.expected {
+				t.Errorf("ContainsEmpty() v = %v,  expected = %v", v, tt.expected)
+			}
+
 		})
 	}
 }

@@ -45,11 +45,7 @@ type Request struct {
 // converts the Timestamp based on the Area. Lastly, it then inserts the
 // generated log-item into the specified database (BigQuery, Postgres, etc.)
 func (r *Request) Process() (*Message, error) {
-	m, notes, err := r.parseMessage()
-	if err != nil {
-		log.WithFields(log.Fields{"err": err}).Error("Request.parseMessage")
-		return nil, err
-	}
+	m, notes := r.parseMessage()
 
 	ts, err := r.getTimestamp()
 	if err != nil {
@@ -84,11 +80,11 @@ func (r *Request) Process() (*Message, error) {
 }
 
 // parseMessage extracts the barometer measure and notes from the form text.
-func (r *Request) parseMessage() (string, string, error) {
+func (r *Request) parseMessage() (string, string) {
 	list := strings.Fields(r.Text)
 	measure := list[0]
 	notes := strings.Join(list[1:], " ")
-	return measure, notes, nil
+	return measure, notes
 }
 
 // getTimestamp obtains the timestamp value from the request.

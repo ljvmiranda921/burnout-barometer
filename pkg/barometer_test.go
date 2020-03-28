@@ -54,6 +54,12 @@ func TestRequest_Process(t *testing.T) {
 			want:    &Message{},
 			wantErr: true,
 		},
+		{
+			name:    "non-int measure",
+			fields:  fields{Text: "A hello world", DebugOnly: true, Timestamp: strconv.FormatInt(time.Now().Unix(), 10), Area: "Asia/Manila"},
+			want:    &Message{},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -90,15 +96,14 @@ func TestRequest_parseMessage(t *testing.T) {
 		item      logItem
 	}
 	tests := []struct {
-		name    string
-		fields  fields
-		want    string
-		want1   string
-		wantErr bool
+		name   string
+		fields fields
+		want   string
+		want1  string
 	}{
-		{name: "single notes", fields: fields{Text: "4 hello"}, want: "4", want1: "hello", wantErr: false},
-		{name: "multiple notes", fields: fields{Text: "4 hello world"}, want: "4", want1: "hello world", wantErr: false},
-		{name: "no notes", fields: fields{Text: "4"}, want: "4", want1: "", wantErr: false},
+		{name: "single notes", fields: fields{Text: "4 hello"}, want: "4", want1: "hello"},
+		{name: "multiple notes", fields: fields{Text: "4 hello world"}, want: "4", want1: "hello world"},
+		{name: "no notes", fields: fields{Text: "4"}, want: "4", want1: ""},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -111,11 +116,7 @@ func TestRequest_parseMessage(t *testing.T) {
 				DebugOnly: tt.fields.DebugOnly,
 				item:      tt.fields.item,
 			}
-			got, got1, err := r.parseMessage()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Request.parseMessage() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+			got, got1 := r.parseMessage()
 			if got != tt.want {
 				t.Errorf("Request.parseMessage() got = %v, want %v", got, tt.want)
 			}

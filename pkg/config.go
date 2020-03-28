@@ -32,14 +32,14 @@ func (cfg *Configuration) WriteConfiguration(outputPath string) error {
 
 	file, err := os.Create(outputPath)
 	if err != nil {
-		log.WithFields(log.Fields{"err": err}).Fatal("os.Create")
+		log.WithFields(log.Fields{"err": err}).Error("os.Create")
 		return err
 	}
 	defer file.Close()
 
 	e := json.NewEncoder(file)
 	if err := e.Encode(cfg); err != nil {
-		log.WithFields(log.Fields{"err": err}).Fatal("json.NewEncoder.Encode")
+		log.WithFields(log.Fields{"err": err}).Error("json.NewEncoder.Encode")
 		return err
 	}
 	return nil
@@ -59,7 +59,7 @@ func ReadConfiguration(cfgPath string) (*Configuration, error) {
 	// Open configuration file
 	cfgFile, err := os.Open(cfgPath)
 	if err != nil {
-		log.WithFields(log.Fields{"err": err}).Fatal("os.Open")
+		log.WithFields(log.Fields{"err": err}).Error("os.Open")
 		return nil, err
 	}
 
@@ -67,7 +67,7 @@ func ReadConfiguration(cfgPath string) (*Configuration, error) {
 	d := json.NewDecoder(cfgFile)
 	config := &Configuration{}
 	if err = d.Decode(config); err != nil {
-		log.WithFields(log.Fields{"err": err}).Fatal("json.NewDecoder.Decode")
+		log.WithFields(log.Fields{"err": err}).Error("json.NewDecoder.Decode")
 		return nil, err
 	}
 
@@ -85,7 +85,7 @@ func ReadConfiguration(cfgPath string) (*Configuration, error) {
 		enc := v.FieldByName(field).String()
 		dec, err := base64.StdEncoding.DecodeString(enc)
 		if err != nil {
-			log.WithFields(log.Fields{"err": err}).Fatal("base64.StdEncoding.DecodeString")
+			log.WithFields(log.Fields{"err": err}).Error("base64.StdEncoding.DecodeString")
 			return nil, err
 		}
 

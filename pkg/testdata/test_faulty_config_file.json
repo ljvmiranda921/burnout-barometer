@@ -1,0 +1,6 @@
+{
+    "PROJECT_ID": "test-project", 
+    "TABLE": "bq://test-table", 
+    "SLACK_TOKEN": "WhRLW1ZQSUhFOUUyQ0lNQXowUVVF",
+    "AREA": "Asia/Manila",
+}
