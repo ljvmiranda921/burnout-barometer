@@ -10,6 +10,11 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+coverage.txt
+coverage.json
+coverage.xml
+coverage/index.html
+report.xml
 
 # Output of go build
 burnout-barometer*
