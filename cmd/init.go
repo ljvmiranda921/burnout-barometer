@@ -34,7 +34,8 @@ on when running the server. The values can be obtained from the prompt or
 through environment variables (prefixed with 'BB_*').
 
 If you're planning to use environment variables, then use the --use-env-vars
-flag. Find all available options in this link: https://ljvmiranda921.github.io/burnout-barometer/installation/
+flag. Find all available options in this link: 
+https://ljvmiranda921.github.io/burnout-barometer/installation/
 `,
 		Example: "barometer init",
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -68,8 +69,8 @@ flag. Find all available options in this link: https://ljvmiranda921.github.io/b
 	}
 
 	// Add flags
-	command.Flags().BoolVar(&useEnvVars, "use-env-vars", false, "Use environment variables")
-	command.Flags().StringVarP(&outputPath, "output-path", "o", "config.json", "Output path for writing configuration file")
+	command.Flags().BoolVar(&useEnvVars, "use-env-vars", false, "use environment variables")
+	command.Flags().StringVarP(&outputPath, "output-path", "o", "config.json", "output path for writing configuration file")
 	return command
 }
 
