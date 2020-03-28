@@ -52,8 +52,8 @@ func ServeCommand() *cobra.Command {
 	}
 
 	// Add flags
-	command.Flags().IntVarP(&port, "port", "p", 8080, "Port to run the server on")
-	command.Flags().StringVarP(&cfgPath, "config", "c", "config.json", "Path to configuration file")
-	command.Flags().BoolVar(&debug, "debug-mode", false, "Debug-mode, don't write to table")
+	command.Flags().IntVarP(&port, "port", "p", 8080, "port to run the server on")
+	command.Flags().StringVarP(&cfgPath, "config", "c", "config.json", "path to configuration file")
+	command.Flags().BoolVar(&debug, "debug-mode", false, "enable debug-mode, don't write to table")
 	return command
 }
