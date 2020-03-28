@@ -139,6 +139,26 @@ func TestServer_handleLog(t *testing.T) {
 	}
 }
 
+func TestContainsEmpty(t *testing.T) {
+	tests := []struct {
+		name     string
+		args     []string
+		expected bool
+	}{
+		{"not empty", []string{"a", "b", "c"}, false},
+		{"contains empty", []string{"", "b", "c"}, true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			v := ContainsEmpty(tt.args...)
+			if v != tt.expected {
+				t.Errorf("ContainsEmpty() v = %v,  expected = %v", v, tt.expected)
+			}
+
+		})
+	}
+}
+
 func TestVerifyWebhook(t *testing.T) {
 	type args struct {
 		query string
