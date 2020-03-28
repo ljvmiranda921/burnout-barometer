@@ -32,14 +32,14 @@ func (cfg *Configuration) WriteConfiguration(outputPath string) error {
 
 	file, err := os.Create(outputPath)
 	if err != nil {
-		log.WithFields(log.Fields{"err": err}).Fatal("os.Create")
+		log.WithFields(log.Fields{"err": err}).Error("os.Create")
 		return err
 	}
 	defer file.Close()
 
 	e := json.NewEncoder(file)
 	if err := e.Encode(cfg); err != nil {
-		log.WithFields(log.Fields{"err": err}).Fatal("json.NewEncoder.Encode")
+		log.WithFields(log.Fields{"err": err}).Error("json.NewEncoder.Encode")
 		return err
 	}
 	return nil
