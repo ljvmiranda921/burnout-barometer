@@ -2,7 +2,6 @@
 // Licensed under the MIT License. See LICENSE in the project root
 // for license information.
 
-// Package pkg contains types and methods for interacting with the barometer.
 package pkg
 
 import (
