@@ -13,7 +13,6 @@ import (
 	"strings"
 	"time"
 
-	"4d63.com/tz"
 	"cloud.google.com/go/bigquery"
 	"github.com/dghubble/go-twitter/twitter"
 	log "github.com/sirupsen/logrus"
@@ -24,82 +23,47 @@ const (
 	ackPrefix      = "Gotcha, I logged your mood"
 )
 
-// Request defines the common form parameters when a slash command is invoked.
-type Request struct {
-	Text          string          // The submitted text in the slash command
-	UserID        string          // Slack User ID that submitted the request
-	Timestamp     string          // Timestamp of the request
-	Area          string          // IANA-compliant area
-	DB            Database        // Database to insert into
-	TwitterClient *twitter.Client // Twitter client
-
-	// If true, then message will not insert into the database. Useful for testing.
-	Debug bool
-}
-
-// Process parses the request and stores into the Database.
-func (r *Request) Process() (*Message, error) {
-	m, notes := r.message()
-
-	ts, err := r.timestamp()
-	if err != nil {
-		log.WithFields(log.Fields{"err": err}).Error("Request.getTimestamp")
-		return nil, err
-	}
-
+// UpdateLog accepts the userID and the text, parses the timestamp, and stores it into the database.
+// If debug is true, then inserting into the database is skipped. This is useful for testing.
+func UpdateLog(userID, text string, timestamp time.Time, db Database, twitterClient *twitter.Client, debug bool) (*Message, error) {
+	m, notes := ParseMessage(text)
 	measure, err := strconv.Atoi(m)
 	if err != nil {
 		log.WithFields(log.Fields{"err": err}).Error("strconv")
 		return nil, err
 	}
 
-	item := logItem{
-		Timestamp:     ts,
-		UserID:        r.UserID,
+	item := LogItem{
+		Timestamp:     timestamp,
+		UserID:        userID,
 		LogMeasure:    measure,
 		Notes:         notes,
-		TwitterClient: r.TwitterClient,
+		TwitterClient: twitterClient,
 	}
 
-	if r.Debug {
+	if debug {
 		log.Info("DebugOnly is set to true, will not insert to database")
 	} else {
-		if err := item.insert(r.DB); err != nil {
+		if err := item.Insert(db); err != nil {
 			log.WithFields(log.Fields{"err": err}).Error("logItem.insert")
 			return nil, err
 		}
 	}
 
-	return item.formatReply()
+	return item.Reply()
 }
 
-// message extracts the barometer measure and notes from the form text.
-func (r *Request) message() (string, string) {
-	list := strings.Fields(r.Text)
+// ParseMessage extracts the barometer measure and notes from a given text.
+func ParseMessage(text string) (string, string) {
+	list := strings.Fields(text)
 	measure := list[0]
 	notes := strings.Join(list[1:], " ")
 	return measure, notes
 }
 
-// timestamp obtains the timestamp value from the request.
-func (r *Request) timestamp() (time.Time, error) {
-	i, err := strconv.ParseInt(r.Timestamp, 10, 64)
-	if err != nil {
-		log.Errorf("cannot parse timestamp %s: %v", r.Timestamp, err)
-		return time.Time{}, err
-	}
-	loc, err := tz.LoadLocation(r.Area)
-	if err != nil {
-		log.Errorf("cannot find location: %s", r.Area)
-		return time.Time{}, err
-	}
-
-	return time.Unix(i, 0).In(loc), nil
-}
-
-// logItem is the user log for the barometer. This also serves as
+// LogItem is the user log for the barometer. This also serves as
 // the schema for the database.
-type logItem struct {
+type LogItem struct {
 	Timestamp     time.Time
 	UserID        string
 	LogMeasure    int
@@ -108,7 +72,7 @@ type logItem struct {
 }
 
 // Save allows us to implement BigQuery's ValueSaver interface.
-func (i *logItem) Save() (map[string]bigquery.Value, string, error) {
+func (i *LogItem) Save() (map[string]bigquery.Value, string, error) {
 	return map[string]bigquery.Value{
 		"timestamp":   i.Timestamp,
 		"user_id":     i.UserID,
@@ -117,8 +81,8 @@ func (i *logItem) Save() (map[string]bigquery.Value, string, error) {
 	}, "", nil
 }
 
-// insert puts the item entry into the specified database.
-func (i *logItem) insert(db Database) error {
+// Insert puts the item entry into the specified database.
+func (i *LogItem) Insert(db Database) error {
 	if err := db.Insert(*i); err != nil {
 		log.Errorf("error in inserting item: %v", err)
 		return err
@@ -127,8 +91,8 @@ func (i *logItem) insert(db Database) error {
 	return nil
 }
 
-// formatReply prepares the Slack message as a response to a slash command.
-func (i *logItem) formatReply() (*Message, error) {
+// Reply prepares the Slack message as a response to a slash command.
+func (i *LogItem) Reply() (*Message, error) {
 	var text string
 	if i.TwitterClient != nil {
 		text = i.fetchTwitterMessage("tinycarebot", 20, true)
@@ -152,7 +116,7 @@ func (i *logItem) formatReply() (*Message, error) {
 }
 
 // fetchTwitterMessage gets N number of the latest tweets from a username (preferably, tinycarebot)
-func (i *logItem) fetchTwitterMessage(screenName string, count int, userOnly bool) string {
+func (i *LogItem) fetchTwitterMessage(screenName string, count int, userOnly bool) string {
 	log.WithFields(log.Fields{"username": screenName}).Trace("fetching tweet")
 	tweets, resp, err := i.TwitterClient.Timelines.UserTimeline(&twitter.UserTimelineParams{
 		ScreenName:     screenName,

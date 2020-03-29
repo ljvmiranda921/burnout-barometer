@@ -10,8 +10,10 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/julienschmidt/httprouter"
 	log "github.com/sirupsen/logrus"
@@ -164,6 +166,36 @@ func TestServer_handleLog(t *testing.T) {
 				t.Fatalf("could not read response: %v", err)
 			}
 			t.Logf("received response: %s", string(b))
+		})
+	}
+}
+
+func TestFetchTimestamp(t *testing.T) {
+	type args struct {
+		requestTimestamp, area string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name:    "cannot parse timestamp",
+			args:    args{requestTimestamp: "03149a", area: "Asia/Manila"},
+			wantErr: true,
+		},
+		{
+			name:    "unknown location",
+			args:    args{requestTimestamp: strconv.FormatInt(time.Now().Unix(), 10), area: "Europe/Manila"},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := FetchTimestamp(tt.args.requestTimestamp, tt.args.area)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FetchTimestamp() err = %v, wantErr %v", err, tt.wantErr)
+			}
 		})
 	}
 }
