@@ -24,7 +24,7 @@ func TestServer_handleIndex(t *testing.T) {
 		Port     int
 		Router   *httprouter.Router
 		Config   *Configuration
-		database Database
+		database DBInserter
 	}
 	tests := []struct {
 		name   string
@@ -69,7 +69,7 @@ func TestServer_handleLog(t *testing.T) {
 		Router    *httprouter.Router
 		Config    *Configuration
 		DebugOnly bool
-		database  Database
+		database  DBInserter
 	}
 	type data struct {
 		text, userID, token string

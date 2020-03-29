@@ -26,7 +26,7 @@ type Server struct {
 	Router *httprouter.Router
 	Config *Configuration
 
-	database Database
+	database DBInserter
 
 	// If true, then message will not insert into the database. Useful for testing.
 	Debug bool
@@ -44,7 +44,7 @@ func (s *Server) Start() error {
 	log.Infof("listening to port %d", s.Port)
 
 	// Identify the scheme for the database connection
-	db, err := NewDatabase(s.Config.Table)
+	db, err := NewDBInserter(s.Config.Table)
 	if err != nil {
 		return err
 	}
