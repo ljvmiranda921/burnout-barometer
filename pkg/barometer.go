@@ -32,22 +32,18 @@ type Request struct {
 	DB            Database        // Database to insert into
 	TwitterClient *twitter.Client // Twitter client
 
-	// If set to true, then the Process() method will not insert into the
-	// database. The resulting Message is just returned.
-	DebugOnly bool
+	// If true, then message will not insert into the database. Useful for testing.
+	Debug bool
 
 	// The parsed log-message to be passed into the database
 	item logItem
 }
 
-// Process parses the request and stores to the Database. It forms a series of
-// methods that first parses the Text into a database-compatible format, then
-// converts the Timestamp based on the Area. Lastly, it then inserts the
-// generated log-item into the specified database (BigQuery, Postgres, etc.)
+// Process parses the request and stores into the Database.
 func (r *Request) Process() (*Message, error) {
 	m, notes := r.parseMessage()
 
-	ts, err := r.getTimestamp()
+	ts, err := r.timestamp()
 	if err != nil {
 		log.WithFields(log.Fields{"err": err}).Error("Request.getTimestamp")
 		return nil, err
@@ -67,7 +63,7 @@ func (r *Request) Process() (*Message, error) {
 		TwitterClient: r.TwitterClient,
 	}
 
-	if r.DebugOnly {
+	if r.Debug {
 		log.Info("DebugOnly is set to true, will not insert to database")
 	} else {
 		if err := r.insertToTable(); err != nil {
@@ -87,8 +83,8 @@ func (r *Request) parseMessage() (string, string) {
 	return measure, notes
 }
 
-// getTimestamp obtains the timestamp value from the request.
-func (r *Request) getTimestamp() (time.Time, error) {
+// timestamp obtains the timestamp value from the request.
+func (r *Request) timestamp() (time.Time, error) {
 	i, err := strconv.ParseInt(r.Timestamp, 10, 64)
 	if err != nil {
 		log.Errorf("cannot parse timestamp %s: %v", r.Timestamp, err)

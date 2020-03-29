@@ -69,7 +69,7 @@ func TestRequest_Process(t *testing.T) {
 				Timestamp: tt.fields.Timestamp,
 				Area:      tt.fields.Area,
 				DB:        tt.fields.DB,
-				DebugOnly: tt.fields.DebugOnly,
+				Debug:     tt.fields.DebugOnly,
 				item:      tt.fields.item,
 			}
 
@@ -113,7 +113,7 @@ func TestRequest_parseMessage(t *testing.T) {
 				Timestamp: tt.fields.Timestamp,
 				Area:      tt.fields.Area,
 				DB:        tt.fields.DB,
-				DebugOnly: tt.fields.DebugOnly,
+				Debug:     tt.fields.DebugOnly,
 				item:      tt.fields.item,
 			}
 			got, got1 := r.parseMessage()

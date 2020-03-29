@@ -39,10 +39,10 @@ func ServeCommand() *cobra.Command {
 			}
 
 			server := pkg.Server{
-				Port:      port,
-				Router:    httprouter.New(),
-				Config:    config,
-				DebugOnly: debug,
+				Port:   port,
+				Router: httprouter.New(),
+				Config: config,
+				Debug:  debug,
 			}
 
 			server.Routes()
