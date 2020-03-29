@@ -17,7 +17,7 @@ import (
 	"golang.org/x/oauth2/clientcredentials"
 )
 
-// Server implements the Optserve server to be run inside the cluster.
+// Server handles all requests coming from the Slack client.
 type Server struct {
 	Port   int
 	Router *httprouter.Router
@@ -25,19 +25,18 @@ type Server struct {
 
 	database Database
 
-	// If set to true, then the Request.Process() method will not insert into
-	// the database. The resulting Message is just returned.
-	DebugOnly bool
+	// If true, then message will not insert into the database. Useful for testing.
+	Debug bool
 }
 
-// Routes contain all handler functions that responds to GET or POST requests.
+// Routes contain all handler functions that respond to GET or POST requests.
 func (s *Server) Routes() {
 	log.Debug("serving routes")
 	s.Router.HandlerFunc(http.MethodPost, "/log", s.handleLog())
 	s.Router.HandlerFunc(http.MethodGet, "/", s.handleIndex())
 }
 
-// Start command starts a server on the specific port.
+// Start command starts a server on a specific port.
 func (s *Server) Start() error {
 	log.Infof("listening to port %d", s.Port)
 
@@ -120,7 +119,7 @@ func (s *Server) handleLog() http.HandlerFunc {
 			client = twitter.NewClient(httpClient)
 		}
 
-		// Process the request
+		// Prepare and process the request
 		req := &Request{
 			Text:          r.FormValue("text"),
 			UserID:        r.FormValue("user_id"),
@@ -128,9 +127,8 @@ func (s *Server) handleLog() http.HandlerFunc {
 			Area:          s.Config.Area,
 			DB:            s.database,
 			TwitterClient: client,
-			DebugOnly:     s.DebugOnly,
+			Debug:         s.Debug,
 		}
-
 		resp, err := req.Process()
 		if err != nil {
 			e := errorMsg{
@@ -141,8 +139,6 @@ func (s *Server) handleLog() http.HandlerFunc {
 			log.WithFields(log.Fields{"err": e.Message}).Error("Request.Process")
 			return
 		}
-
-		// Send reply back to Slack
 		json.NewEncoder(w).Encode(resp)
 	}
 }

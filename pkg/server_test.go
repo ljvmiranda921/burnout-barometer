@@ -112,11 +112,11 @@ func TestServer_handleLog(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := &Server{
-				Port:      tt.fields.Port,
-				Router:    tt.fields.Router,
-				Config:    tt.fields.Config,
-				DebugOnly: tt.fields.DebugOnly,
-				database:  tt.fields.database,
+				Port:     tt.fields.Port,
+				Router:   tt.fields.Router,
+				Config:   tt.fields.Config,
+				Debug:    tt.fields.DebugOnly,
+				database: tt.fields.database,
 			}
 
 			srv := httptest.NewServer(s.handleLog())
