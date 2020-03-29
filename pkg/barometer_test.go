@@ -27,8 +27,7 @@ func TestRequest_Process(t *testing.T) {
 		Timestamp string
 		Area      string
 		DB        Database
-		DebugOnly bool
-		item      logItem
+		Debug     bool
 	}
 	tests := []struct {
 		name    string
@@ -38,25 +37,25 @@ func TestRequest_Process(t *testing.T) {
 	}{
 		{
 			name:    "happy path",
-			fields:  fields{Text: "4 hello world", DebugOnly: true, Timestamp: strconv.FormatInt(time.Now().Unix(), 10), Area: "Asia/Manila"},
+			fields:  fields{Text: "4 hello world", Debug: true, Timestamp: strconv.FormatInt(time.Now().Unix(), 10), Area: "Asia/Manila"},
 			want:    &Message{Text: fmt.Sprintf("%s: 4 (hello world)", ackPrefix)},
 			wantErr: false,
 		},
 		{
 			name:    "unknown location",
-			fields:  fields{Text: "4 hello world", DebugOnly: true, Timestamp: strconv.FormatInt(time.Now().Unix(), 10), Area: "Europe/Manila"},
+			fields:  fields{Text: "4 hello world", Debug: true, Timestamp: strconv.FormatInt(time.Now().Unix(), 10), Area: "Europe/Manila"},
 			want:    &Message{},
 			wantErr: true,
 		},
 		{
 			name:    "unknown timestamp",
-			fields:  fields{Text: "4 hello world", DebugOnly: true, Timestamp: "03149a", Area: "Asia/Manila"},
+			fields:  fields{Text: "4 hello world", Debug: true, Timestamp: "03149a", Area: "Asia/Manila"},
 			want:    &Message{},
 			wantErr: true,
 		},
 		{
 			name:    "non-int measure",
-			fields:  fields{Text: "A hello world", DebugOnly: true, Timestamp: strconv.FormatInt(time.Now().Unix(), 10), Area: "Asia/Manila"},
+			fields:  fields{Text: "A hello world", Debug: true, Timestamp: strconv.FormatInt(time.Now().Unix(), 10), Area: "Asia/Manila"},
 			want:    &Message{},
 			wantErr: true,
 		},
@@ -69,8 +68,7 @@ func TestRequest_Process(t *testing.T) {
 				Timestamp: tt.fields.Timestamp,
 				Area:      tt.fields.Area,
 				DB:        tt.fields.DB,
-				Debug:     tt.fields.DebugOnly,
-				item:      tt.fields.item,
+				Debug:     tt.fields.Debug,
 			}
 
 			got, err := r.Process()
@@ -92,8 +90,7 @@ func TestRequest_parseMessage(t *testing.T) {
 		Timestamp string
 		Area      string
 		DB        Database
-		DebugOnly bool
-		item      logItem
+		Debug     bool
 	}
 	tests := []struct {
 		name   string
@@ -113,10 +110,9 @@ func TestRequest_parseMessage(t *testing.T) {
 				Timestamp: tt.fields.Timestamp,
 				Area:      tt.fields.Area,
 				DB:        tt.fields.DB,
-				Debug:     tt.fields.DebugOnly,
-				item:      tt.fields.item,
+				Debug:     tt.fields.Debug,
 			}
-			got, got1 := r.parseMessage()
+			got, got1 := r.message()
 			if got != tt.want {
 				t.Errorf("Request.parseMessage() got = %v, want %v", got, tt.want)
 			}
