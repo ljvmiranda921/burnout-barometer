@@ -149,7 +149,7 @@ func (s *Server) handleLog() http.HandlerFunc {
 	}
 }
 
-// FetchTimestamp obtains the timestamp value from the request.
+// FetchTimestamp obtains the timestamp value from the request and location.
 func FetchTimestamp(timestamp, area string) (time.Time, error) {
 	i, err := strconv.ParseInt(timestamp, 10, 64)
 	if err != nil {

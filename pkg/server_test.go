@@ -248,6 +248,28 @@ func TestVerifyWebhook(t *testing.T) {
 	}
 }
 
+func ExampleFetchTimestamp() {
+	ts := strconv.FormatInt(time.Now().Unix(), 10)
+	area := "Asia/Manila" // IANA-compliant timezone name
+	timestamp, err := FetchTimestamp(ts, area)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("time is: %v", timestamp)
+}
+
+func ExampleContainsEmpty() {
+	containsEmpty := []string{"A", "B", ""}
+	if ContainsEmpty(containsEmpty...) {
+		fmt.Println("contains an empty string")
+	}
+
+	noEmpty := []string{"A", "B", "C"}
+	if !ContainsEmpty(noEmpty...) {
+		fmt.Println("no empty string")
+	}
+}
+
 func ExampleVerifyWebhook() {
 	// Example token obtained from Slack
 	token := "M4KY3LOVPIhE9E2zIMAz0QUE"

@@ -79,3 +79,9 @@ func TestParseMessage(t *testing.T) {
 		})
 	}
 }
+
+func ExampleParseMessage() {
+	message := "4 I had dinner with family and friends!"
+	measure, notes := ParseMessage(message)
+	fmt.Printf("Your message: %s (%s)", measure, notes)
+}

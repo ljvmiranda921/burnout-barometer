@@ -24,7 +24,7 @@ const (
 )
 
 // UpdateLog accepts the userID and the text, parses the timestamp, and stores it into the database.
-// If debug is true, then inserting into the database is skipped. This is useful for testing.
+// If debug is true, then log is not inserted into the database. This option is useful for testing.
 func UpdateLog(userID, text string, timestamp time.Time, db DBInserter, twitterClient *twitter.Client, debug bool) (*Message, error) {
 	m, notes := ParseMessage(text)
 	measure, err := strconv.Atoi(m)
