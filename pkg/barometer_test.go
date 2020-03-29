@@ -61,10 +61,7 @@ func TestUpdateLog(t *testing.T) {
 
 func TestParseMessage(t *testing.T) {
 	tests := []struct {
-		name  string
-		arg   string
-		want  string
-		want1 string
+		name, arg, want, want1 string
 	}{
 		{name: "single notes", arg: "4 hello", want: "4", want1: "hello"},
 		{name: "multiple notes", arg: "4 hello world", want: "4", want1: "hello world"},
