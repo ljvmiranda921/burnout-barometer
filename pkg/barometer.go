@@ -36,7 +36,7 @@ func UpdateLog(userID, text string, timestamp time.Time, db Database, twitterCli
 	item := LogItem{
 		Timestamp:     timestamp,
 		UserID:        userID,
-		LogMeasure:    measure,
+		Measure:       measure,
 		Notes:         notes,
 		TwitterClient: twitterClient,
 	}
@@ -54,8 +54,8 @@ func UpdateLog(userID, text string, timestamp time.Time, db Database, twitterCli
 }
 
 // ParseMessage extracts the barometer measure and notes from a given text.
-func ParseMessage(text string) (string, string) {
-	list := strings.Fields(text)
+func ParseMessage(s string) (string, string) {
+	list := strings.Fields(s)
 	measure := list[0]
 	notes := strings.Join(list[1:], " ")
 	return measure, notes
@@ -66,7 +66,7 @@ func ParseMessage(text string) (string, string) {
 type LogItem struct {
 	Timestamp     time.Time
 	UserID        string
-	LogMeasure    int
+	Measure       int
 	Notes         string
 	TwitterClient *twitter.Client
 }
@@ -76,7 +76,7 @@ func (i *LogItem) Save() (map[string]bigquery.Value, string, error) {
 	return map[string]bigquery.Value{
 		"timestamp":   i.Timestamp,
 		"user_id":     i.UserID,
-		"log_measure": i.LogMeasure,
+		"log_measure": i.Measure,
 		"notes":       i.Notes,
 	}, "", nil
 }
@@ -108,7 +108,7 @@ func (i *LogItem) Reply() (*Message, error) {
 
 	msg := &Message{
 		ResponseType: "ephemeral",
-		Text:         fmt.Sprintf("%s: %d (%s)", ackPrefix, i.LogMeasure, i.Notes),
+		Text:         fmt.Sprintf("%s: %d (%s)", ackPrefix, i.Measure, i.Notes),
 		Attachments:  []Attachment{attach},
 	}
 

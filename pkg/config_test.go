@@ -18,19 +18,16 @@ func TestConfiguration_WriteConfiguration(t *testing.T) {
 		Token string
 		Area  string
 	}
-	type args struct {
-		outputPath string
-	}
 	tests := []struct {
 		name    string
 		fields  fields
-		args    args
+		arg     string
 		wantErr bool
 	}{
 		{
 			name:    "file exists after creation",
 			fields:  fields{Table: "test-table", Token: "test-token", Area: "test-area"},
-			args:    args{outputPath: "test_file.json"},
+			arg:     "test_file.json",
 			wantErr: false,
 		},
 	}
@@ -41,13 +38,13 @@ func TestConfiguration_WriteConfiguration(t *testing.T) {
 				Token: tt.fields.Token,
 				Area:  tt.fields.Area,
 			}
-			if err := cfg.WriteConfiguration(tt.args.outputPath); (err != nil) != tt.wantErr {
+			if err := cfg.WriteConfiguration(tt.arg); (err != nil) != tt.wantErr {
 				t.Errorf("Configuration.WriteConfiguration() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			// Remove the generated file
-			if _, err := os.Stat(tt.args.outputPath); err == nil {
-				t.Logf("removing generated file: %s", tt.args.outputPath)
-				os.Remove(tt.args.outputPath)
+			if _, err := os.Stat(tt.arg); err == nil {
+				t.Logf("removing generated file: %s", tt.arg)
+				os.Remove(tt.arg)
 
 			}
 		})
@@ -55,36 +52,33 @@ func TestConfiguration_WriteConfiguration(t *testing.T) {
 }
 
 func TestReadConfiguration(t *testing.T) {
-	type args struct {
-		cfgPath string
-	}
 	tests := []struct {
 		name    string
-		args    args
+		arg     string
 		want    *Configuration
 		wantErr bool
 	}{
 		{
 			name:    "happy path read config",
-			args:    args{cfgPath: "testdata/test_happy_path_read_config.json"},
+			arg:     "testdata/test_happy_path_read_config.json",
 			want:    &Configuration{Table: "bq://test-table", Token: "ZK[VPIHE9E2CIMAz0QUE", Area: "Asia/Manila"},
 			wantErr: false,
 		},
 		{
 			name:    "config does not exist",
-			args:    args{cfgPath: "testdata/does_not_exist_config.json"},
+			arg:     "testdata/does_not_exist_config.json",
 			want:    &Configuration{},
 			wantErr: true,
 		},
 		{
 			name:    "faulty config file",
-			args:    args{cfgPath: "testdata/test_faulty_config_file.json"},
+			arg:     "testdata/test_faulty_config_file.json",
 			want:    &Configuration{},
 			wantErr: true,
 		},
 		{
 			name:    "improperly encoded token",
-			args:    args{cfgPath: "testdata/test_faulty_base64_decode.json"},
+			arg:     "testdata/test_faulty_base64_decode.json",
 			want:    &Configuration{},
 			wantErr: true,
 		},
@@ -92,7 +86,7 @@ func TestReadConfiguration(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			_, err := ReadConfiguration(tt.args.cfgPath)
+			_, err := ReadConfiguration(tt.arg)
 
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ReadConfiguration() error = %v, wantErr %v", err, tt.wantErr)

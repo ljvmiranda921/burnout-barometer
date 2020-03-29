@@ -28,9 +28,9 @@ type Configuration struct {
 }
 
 // WriteConfiguration creates a configuration file at a given output path.
-func (cfg *Configuration) WriteConfiguration(outputPath string) error {
+func (cfg *Configuration) WriteConfiguration(path string) error {
 
-	file, err := os.Create(outputPath)
+	file, err := os.Create(path)
 	if err != nil {
 		log.WithFields(log.Fields{"err": err}).Error("os.Create")
 		return err
@@ -54,17 +54,17 @@ func (cfg *Configuration) update(field string, value string) {
 
 // ReadConfiguration reads the configuration file and returns an instance
 // of a Configuration.
-func ReadConfiguration(cfgPath string) (*Configuration, error) {
+func ReadConfiguration(path string) (*Configuration, error) {
 
 	// Open configuration file
-	cfgFile, err := os.Open(cfgPath)
+	file, err := os.Open(path)
 	if err != nil {
 		log.WithFields(log.Fields{"err": err}).Error("os.Open")
 		return nil, err
 	}
 
 	// Create a decoder from the file
-	d := json.NewDecoder(cfgFile)
+	d := json.NewDecoder(file)
 	config := &Configuration{}
 	if err = d.Decode(config); err != nil {
 		log.WithFields(log.Fields{"err": err}).Error("json.NewDecoder.Decode")
