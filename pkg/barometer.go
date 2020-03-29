@@ -8,6 +8,7 @@ package pkg
 import (
 	"fmt"
 	"math/rand"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
@@ -34,14 +35,11 @@ type Request struct {
 
 	// If true, then message will not insert into the database. Useful for testing.
 	Debug bool
-
-	// The parsed log-message to be passed into the database
-	item logItem
 }
 
 // Process parses the request and stores into the Database.
 func (r *Request) Process() (*Message, error) {
-	m, notes := r.parseMessage()
+	m, notes := r.message()
 
 	ts, err := r.timestamp()
 	if err != nil {
@@ -55,7 +53,7 @@ func (r *Request) Process() (*Message, error) {
 		return nil, err
 	}
 
-	r.item = logItem{
+	item := logItem{
 		Timestamp:     ts,
 		UserID:        r.UserID,
 		LogMeasure:    measure,
@@ -66,17 +64,17 @@ func (r *Request) Process() (*Message, error) {
 	if r.Debug {
 		log.Info("DebugOnly is set to true, will not insert to database")
 	} else {
-		if err := r.insertToTable(); err != nil {
-			log.WithFields(log.Fields{"err": err}).Error("Request.insertToTable")
+		if err := item.insert(r.DB); err != nil {
+			log.WithFields(log.Fields{"err": err}).Error("logItem.insert")
 			return nil, err
 		}
 	}
 
-	return r.item.formatReply()
+	return item.formatReply()
 }
 
-// parseMessage extracts the barometer measure and notes from the form text.
-func (r *Request) parseMessage() (string, string) {
+// message extracts the barometer measure and notes from the form text.
+func (r *Request) message() (string, string) {
 	list := strings.Fields(r.Text)
 	measure := list[0]
 	notes := strings.Join(list[1:], " ")
@@ -99,16 +97,6 @@ func (r *Request) timestamp() (time.Time, error) {
 	return time.Unix(i, 0).In(loc), nil
 }
 
-// insertToTable adds the item entry into the specified database.
-func (r *Request) insertToTable() error {
-	if err := r.DB.Insert(r.item); err != nil {
-		log.Errorf("error in inserting item: %v", err)
-		return err
-	}
-
-	return nil
-}
-
 // logItem is the user log for the barometer. This also serves as
 // the schema for the database.
 type logItem struct {
@@ -127,6 +115,16 @@ func (i *logItem) Save() (map[string]bigquery.Value, string, error) {
 		"log_measure": i.LogMeasure,
 		"notes":       i.Notes,
 	}, "", nil
+}
+
+// insert puts the item entry into the specified database.
+func (i *logItem) insert(db Database) error {
+	if err := db.Insert(*i); err != nil {
+		log.Errorf("error in inserting item: %v", err)
+		return err
+	}
+
+	return nil
 }
 
 // formatReply prepares the Slack message as a response to a slash command.
@@ -162,7 +160,7 @@ func (i *logItem) fetchTwitterMessage(screenName string, count int, userOnly boo
 		ExcludeReplies: &userOnly,
 	})
 
-	if err != nil || resp.StatusCode != 200 {
+	if err != nil || resp.StatusCode != http.StatusOK {
 		log.Tracef("fetch unsuccessful: %v", err)
 		return defaultMessage
 	}
