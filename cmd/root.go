@@ -18,7 +18,7 @@ func NewCommand() *cobra.Command {
 	var command = &cobra.Command{
 		Use:     "barometer [command]",
 		Short:   "barometer is the command-line interface to Burnout Barometer",
-		Version: "v1.0.0-beta.0",
+		Version: "v1.0.0-beta.1",
 		Run: func(cmd *cobra.Command, args []string) {
 			initLogger(verbosity)
 			cmd.HelpFunc()(cmd, args)
