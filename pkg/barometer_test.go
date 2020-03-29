@@ -60,21 +60,50 @@ func TestUpdateLog(t *testing.T) {
 
 func TestParseMessage(t *testing.T) {
 	tests := []struct {
-		name, arg, want, want1 string
+		name, arg, want1 string
+		want             int
+		wantErr          bool
 	}{
-		{name: "single notes", arg: "4 hello", want: "4", want1: "hello"},
-		{name: "multiple notes", arg: "4 hello world", want: "4", want1: "hello world"},
-		{name: "no notes", arg: "4", want: "4", want1: ""},
+		{name: "single notes", arg: "4 hello", want: 4, want1: "hello", wantErr: false},
+		{name: "multiple notes", arg: "4 hello world", want: 4, want1: "hello world", wantErr: false},
+		{name: "no notes", arg: "4", want: 4, want1: "", wantErr: false},
+		{name: "cannot convert measure", arg: "X hello world", wantErr: true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := ParseMessage(tt.arg)
+			got, got1, err := ParseMessage(tt.arg)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ParseMessage() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
 			if got != tt.want {
-				t.Errorf("Request.parseMessage() got = %v, want %v", got, tt.want)
+				t.Errorf("ParseMessage() got = %d, want %d", got, tt.want)
 			}
 			if got1 != tt.want1 {
-				t.Errorf("Request.parseMessage() got1 = %v, want %v", got1, tt.want1)
+				t.Errorf("ParseMessage() got1 = %s, want %s", got1, tt.want1)
 			}
 		})
 	}
+}
+
+func ExampleUpdateLog() {
+	// Prepare inputs for updating the log
+	userID := "W012A3CDE"
+	text := "4 Had dinner with friends today!"
+	message, err := UpdateLog(userID, text, time.Now(), nil, nil, true) // Run in debug-mode
+	if err != nil {
+		log.Fatalf("cannot update log, err: %v", err)
+	}
+	fmt.Println(message.Text)
+	// Output: Gotcha, I logged your mood: 4 (Had dinner with friends today!)
+}
+
+func ExampleParseMessage() {
+	message := "4 Had awesome dinner!"
+	measure, notes, err := ParseMessage(message)
+	if err != nil {
+		log.Fatalf("cannot parse message, err: %v", err)
+	}
+	fmt.Printf("Your message: %s (%d)", notes, measure)
+	// Output: Your message: Had awesome dinner! (4)
 }

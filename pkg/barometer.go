@@ -26,8 +26,7 @@ const (
 // UpdateLog accepts the userID and the text, parses the timestamp, and stores it into the database.
 // If debug is true, then log is not inserted into the database. This option is useful for testing.
 func UpdateLog(userID, text string, timestamp time.Time, db DBInserter, twitterClient *twitter.Client, debug bool) (*Message, error) {
-	m, notes := ParseMessage(text)
-	measure, err := strconv.Atoi(m)
+	measure, notes, err := ParseMessage(text)
 	if err != nil {
 		log.WithFields(log.Fields{"err": err}).Error("strconv")
 		return nil, err
@@ -54,11 +53,16 @@ func UpdateLog(userID, text string, timestamp time.Time, db DBInserter, twitterC
 }
 
 // ParseMessage extracts the barometer measure and notes from a given text.
-func ParseMessage(s string) (string, string) {
+func ParseMessage(s string) (int, string, error) {
 	list := strings.Fields(s)
-	measure := list[0]
+	m := list[0]
 	notes := strings.Join(list[1:], " ")
-	return measure, notes
+	measure, err := strconv.Atoi(m)
+	if err != nil {
+		log.WithFields(log.Fields{"err": err}).Error("strconv")
+		return 0, "", err
+	}
+	return measure, notes, nil
 }
 
 // LogItem is the user log for the barometer. This also serves as

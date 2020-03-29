@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/julienschmidt/httprouter"
+	log "github.com/sirupsen/logrus"
 )
 
 func TestServer_handleIndex(t *testing.T) {
@@ -244,5 +245,40 @@ func TestVerifyWebhook(t *testing.T) {
 				t.Errorf("VerifyWebhook() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
+	}
+}
+
+func ExampleFetchTimestamp() {
+	ts := strconv.FormatInt(time.Now().Unix(), 10)
+	area := "Asia/Manila" // IANA-compliant timezone name
+	timestamp, err := FetchTimestamp(ts, area)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("time is: %v", timestamp)
+}
+
+func ExampleContainsEmpty() {
+	containsEmpty := []string{"A", "B", ""}
+	if ContainsEmpty(containsEmpty...) {
+		fmt.Println("contains an empty string")
+	}
+	// Output:  contains an empty string
+}
+
+func ExampleVerifyWebhook() {
+	// Example token obtained from Slack
+	token := "M4KY3LOVPIhE9E2zIMAz0QUE"
+
+	// Example query sent by the slash command
+	q := "token=M4KY3LOVPIhE9E2zIMAz0QUE&text=4 hello&user_id=UA1DXYCL2"
+	v, err := url.ParseQuery(q)
+	if err != nil {
+		panic(err)
+	}
+
+	if err := VerifyWebhook(v, token); err != nil {
+		// Webhook didn't match, throw an error
+		log.Fatal(err)
 	}
 }
