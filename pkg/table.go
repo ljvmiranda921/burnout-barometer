@@ -15,20 +15,19 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// Database is a generic interface for storing and accessing barometer logs.
-type Database interface {
-	GetURL() *url.URL          // Get the URL representation of the database
-	Insert(item LogItem) error // Insert a log into the Database
+// DBInserter is an interface for storing barometer logs.
+type DBInserter interface {
+	InsertDB(item LogItem) error // Insert a log into the Database
 }
 
-// NewDatabase creates a Database based on the detected scheme of the URL.
-func NewDatabase(dburl string) (Database, error) {
+// NewDBInserter creates a DBInserter based on the detected scheme of the URL.
+func NewDBInserter(dburl string) (DBInserter, error) {
 	u, err := url.Parse(dburl)
 	if err != nil {
 		return nil, err
 	}
 
-	var db Database
+	var db DBInserter
 
 	switch u.Scheme {
 	case "bigquery", "bq":
@@ -52,11 +51,7 @@ type bigQuery struct {
 	Config *url.URL
 }
 
-func (t *bigQuery) GetURL() *url.URL {
-	return t.Config
-}
-
-func (t *bigQuery) Insert(item LogItem) error {
+func (t *bigQuery) InsertDB(item LogItem) error {
 	ctx := context.Background()
 	project, dataset, table := t.splitBQPath(t.Config.Host)
 	client, err := bigquery.NewClient(ctx, project)
@@ -85,11 +80,7 @@ type postgres struct {
 	Config *url.URL
 }
 
-func (t *postgres) GetURL() *url.URL {
-	return t.Config
-}
-
-func (t *postgres) Insert(item LogItem) error {
+func (t *postgres) InsertDB(item LogItem) error {
 	opts, err := pg.ParseURL(t.URL)
 	if err != nil {
 		return fmt.Errorf("error in pg.ParseURL: %v", err)

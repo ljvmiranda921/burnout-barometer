@@ -23,7 +23,7 @@ func TestUpdateLog(t *testing.T) {
 	type args struct {
 		userID, text string
 		timestamp    time.Time
-		db           Database
+		db           DBInserter
 		debug        bool
 	}
 	tests := []struct {

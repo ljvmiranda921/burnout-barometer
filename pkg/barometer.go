@@ -25,7 +25,7 @@ const (
 
 // UpdateLog accepts the userID and the text, parses the timestamp, and stores it into the database.
 // If debug is true, then inserting into the database is skipped. This is useful for testing.
-func UpdateLog(userID, text string, timestamp time.Time, db Database, twitterClient *twitter.Client, debug bool) (*Message, error) {
+func UpdateLog(userID, text string, timestamp time.Time, db DBInserter, twitterClient *twitter.Client, debug bool) (*Message, error) {
 	m, notes := ParseMessage(text)
 	measure, err := strconv.Atoi(m)
 	if err != nil {
@@ -82,8 +82,8 @@ func (i *LogItem) Save() (map[string]bigquery.Value, string, error) {
 }
 
 // Insert puts the item entry into the specified database.
-func (i *LogItem) Insert(db Database) error {
-	if err := db.Insert(*i); err != nil {
+func (i *LogItem) Insert(db DBInserter) error {
+	if err := db.InsertDB(*i); err != nil {
 		log.Errorf("error in inserting item: %v", err)
 		return err
 	}
