@@ -8,7 +8,6 @@ package pkg
 import (
 	"fmt"
 	"io/ioutil"
-	"strconv"
 	"testing"
 	"time"
 
@@ -20,99 +19,60 @@ func init() {
 	log.SetOutput(ioutil.Discard)
 }
 
-func TestRequest_Process(t *testing.T) {
-	type fields struct {
-		Text      string
-		UserID    string
-		Timestamp string
-		Area      string
-		DB        Database
-		Debug     bool
+func TestUpdateLog(t *testing.T) {
+	type args struct {
+		userID, text string
+		timestamp    time.Time
+		db           Database
+		debug        bool
 	}
 	tests := []struct {
 		name    string
-		fields  fields
+		args    args
 		want    *Message
 		wantErr bool
 	}{
 		{
 			name:    "happy path",
-			fields:  fields{Text: "4 hello world", Debug: true, Timestamp: strconv.FormatInt(time.Now().Unix(), 10), Area: "Asia/Manila"},
+			args:    args{text: "4 hello world", debug: true, timestamp: time.Now()},
 			want:    &Message{Text: fmt.Sprintf("%s: 4 (hello world)", ackPrefix)},
 			wantErr: false,
 		},
 		{
-			name:    "unknown location",
-			fields:  fields{Text: "4 hello world", Debug: true, Timestamp: strconv.FormatInt(time.Now().Unix(), 10), Area: "Europe/Manila"},
-			want:    &Message{},
-			wantErr: true,
-		},
-		{
-			name:    "unknown timestamp",
-			fields:  fields{Text: "4 hello world", Debug: true, Timestamp: "03149a", Area: "Asia/Manila"},
-			want:    &Message{},
-			wantErr: true,
-		},
-		{
 			name:    "non-int measure",
-			fields:  fields{Text: "A hello world", Debug: true, Timestamp: strconv.FormatInt(time.Now().Unix(), 10), Area: "Asia/Manila"},
+			args:    args{text: "A hello world", debug: true, timestamp: time.Now()},
 			want:    &Message{},
 			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := &Request{
-				Text:      tt.fields.Text,
-				UserID:    tt.fields.UserID,
-				Timestamp: tt.fields.Timestamp,
-				Area:      tt.fields.Area,
-				DB:        tt.fields.DB,
-				Debug:     tt.fields.Debug,
-			}
-
-			got, err := r.Process()
+			got, err := UpdateLog(tt.args.userID, tt.args.text, tt.args.timestamp, tt.args.db, nil, tt.args.debug)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Request.Process() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("UpdateLog() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if (got != nil) && (got.Text != tt.want.Text) {
-				t.Errorf("Request.Process() = %v, want %v", got.Text, tt.want.Text)
+				t.Errorf("UpdateLog() = %v, want %v", got.Text, tt.want.Text)
 			}
 		})
 	}
 }
 
-func TestRequest_parseMessage(t *testing.T) {
-	type fields struct {
-		Text      string
-		UserID    string
-		Timestamp string
-		Area      string
-		DB        Database
-		Debug     bool
-	}
+func TestParseMessage(t *testing.T) {
 	tests := []struct {
-		name   string
-		fields fields
-		want   string
-		want1  string
+		name  string
+		arg   string
+		want  string
+		want1 string
 	}{
-		{name: "single notes", fields: fields{Text: "4 hello"}, want: "4", want1: "hello"},
-		{name: "multiple notes", fields: fields{Text: "4 hello world"}, want: "4", want1: "hello world"},
-		{name: "no notes", fields: fields{Text: "4"}, want: "4", want1: ""},
+		{name: "single notes", arg: "4 hello", want: "4", want1: "hello"},
+		{name: "multiple notes", arg: "4 hello world", want: "4", want1: "hello world"},
+		{name: "no notes", arg: "4", want: "4", want1: ""},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := &Request{
-				Text:      tt.fields.Text,
-				UserID:    tt.fields.UserID,
-				Timestamp: tt.fields.Timestamp,
-				Area:      tt.fields.Area,
-				DB:        tt.fields.DB,
-				Debug:     tt.fields.Debug,
-			}
-			got, got1 := r.message()
+			got, got1 := ParseMessage(tt.arg)
 			if got != tt.want {
 				t.Errorf("Request.parseMessage() got = %v, want %v", got, tt.want)
 			}

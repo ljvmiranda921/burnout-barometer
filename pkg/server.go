@@ -9,7 +9,10 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
+	"time"
 
+	"4d63.com/tz"
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/julienschmidt/httprouter"
 	log "github.com/sirupsen/logrus"
@@ -120,27 +123,46 @@ func (s *Server) handleLog() http.HandlerFunc {
 		}
 
 		// Prepare and process the request
-		req := &Request{
-			Text:          r.FormValue("text"),
-			UserID:        r.FormValue("user_id"),
-			Timestamp:     r.Header.Get("X-Slack-Request-Timestamp"),
-			Area:          s.Config.Area,
-			DB:            s.database,
-			TwitterClient: client,
-			Debug:         s.Debug,
+		text := r.FormValue("text")
+		userID := r.FormValue("user_id")
+		timestamp, err := FetchTimestamp(r.Header.Get("X-Slack-Request-Timestamp"), s.Config.Area)
+		if err != nil {
+			e := errorMsg{
+				Message: fmt.Sprintf("cannot convert timestamp properly: %s", err),
+				Code:    http.StatusBadRequest,
+			}
+			e.JSONError(w)
+			log.WithFields(log.Fields{"err": e.Message}).Error("FetchTimestamp")
+			return
 		}
-		resp, err := req.Process()
+		resp, err := UpdateLog(userID, text, timestamp, s.database, client, s.Debug)
 		if err != nil {
 			e := errorMsg{
 				Message: fmt.Sprintf("error in processing request: %s", err),
 				Code:    http.StatusBadRequest,
 			}
 			e.JSONError(w)
-			log.WithFields(log.Fields{"err": e.Message}).Error("Request.Process")
+			log.WithFields(log.Fields{"err": e.Message}).Error("UpdateLog")
 			return
 		}
 		json.NewEncoder(w).Encode(resp)
 	}
+}
+
+// FetchTimestamp obtains the timestamp value from the request.
+func FetchTimestamp(requestTimestamp, area string) (time.Time, error) {
+	i, err := strconv.ParseInt(requestTimestamp, 10, 64)
+	if err != nil {
+		log.Errorf("cannot parse timestamp %s: %v", requestTimestamp, err)
+		return time.Time{}, err
+	}
+	loc, err := tz.LoadLocation(area)
+	if err != nil {
+		log.Errorf("cannot find location: %s", area)
+		return time.Time{}, err
+	}
+
+	return time.Unix(i, 0).In(loc), nil
 }
 
 // ContainsEmpty checks if an array of strings contains an empty string.
