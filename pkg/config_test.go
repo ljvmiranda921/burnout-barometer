@@ -14,9 +14,7 @@ import (
 
 func TestConfiguration_WriteConfiguration(t *testing.T) {
 	type fields struct {
-		Table string
-		Token string
-		Area  string
+		Table, Token, Area string
 	}
 	tests := []struct {
 		name    string
