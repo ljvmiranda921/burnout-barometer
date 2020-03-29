@@ -150,10 +150,10 @@ func (s *Server) handleLog() http.HandlerFunc {
 }
 
 // FetchTimestamp obtains the timestamp value from the request.
-func FetchTimestamp(requestTimestamp, area string) (time.Time, error) {
-	i, err := strconv.ParseInt(requestTimestamp, 10, 64)
+func FetchTimestamp(timestamp, area string) (time.Time, error) {
+	i, err := strconv.ParseInt(timestamp, 10, 64)
 	if err != nil {
-		log.Errorf("cannot parse timestamp %s: %v", requestTimestamp, err)
+		log.Errorf("cannot parse timestamp %s: %v", timestamp, err)
 		return time.Time{}, err
 	}
 	loc, err := tz.LoadLocation(area)
