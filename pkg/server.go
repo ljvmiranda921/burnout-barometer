@@ -135,7 +135,7 @@ func (s *Server) handleLog() http.HandlerFunc {
 			log.WithFields(log.Fields{"err": e.Message}).Error("FetchTimestamp")
 			return
 		}
-		resp, err := UpdateLog(userID, text, timestamp, s.database, client, s.Debug)
+		resp, err := UpdateLog(userID, text, *timestamp, s.database, client, s.Debug)
 		if err != nil {
 			e := errorMsg{
 				Message: fmt.Sprintf("error in processing request: %s", err),
@@ -150,19 +150,19 @@ func (s *Server) handleLog() http.HandlerFunc {
 }
 
 // FetchTimestamp obtains the timestamp value from the request and location.
-func FetchTimestamp(timestamp, area string) (time.Time, error) {
+func FetchTimestamp(timestamp, area string) (*time.Time, error) {
 	i, err := strconv.ParseInt(timestamp, 10, 64)
 	if err != nil {
 		log.Errorf("cannot parse timestamp %s: %v", timestamp, err)
-		return time.Time{}, err
+		return nil, err
 	}
 	loc, err := tz.LoadLocation(area)
 	if err != nil {
 		log.Errorf("cannot find location: %s", area)
-		return time.Time{}, err
+		return nil, err
 	}
-
-	return time.Unix(i, 0).In(loc), nil
+	currentTime := time.Unix(i, 0).In(loc)
+	return &currentTime, nil
 }
 
 // ContainsEmpty checks if an array of strings contains an empty string.
@@ -185,7 +185,6 @@ func VerifyWebhook(form url.Values, token string) error {
 	if t != token {
 		return fmt.Errorf("invalid request/credentials: %q", t[0])
 	}
-
 	return nil
 }
 
