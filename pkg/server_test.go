@@ -255,7 +255,7 @@ func ExampleFetchTimestamp() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("time is: %v", timestamp)
+	fmt.Printf("time is: %v", *timestamp)
 }
 
 func ExampleContainsEmpty() {
