@@ -79,11 +79,11 @@ func TestParseMessage(t *testing.T) {
 				t.Errorf("ParseMessage() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if got != tt.want {
-				t.Errorf("ParseMessage() got = %d, want %d", got, tt.want)
+			if (got != nil) && *got != tt.want {
+				t.Errorf("ParseMessage() got = %d, want %d", *got, tt.want)
 			}
-			if got1 != tt.want1 {
-				t.Errorf("ParseMessage() got1 = %s, want %s", got1, tt.want1)
+			if (got1 != nil) && *got1 != tt.want1 {
+				t.Errorf("ParseMessage() got1 = %s, want %s", *got1, tt.want1)
 			}
 		})
 	}
@@ -107,6 +107,6 @@ func ExampleParseMessage() {
 	if err != nil {
 		log.Fatalf("cannot parse message, err: %v", err)
 	}
-	fmt.Printf("Your message: %s (%d)", notes, measure)
+	fmt.Printf("Your message: %s (%d)", *notes, *measure)
 	// Output: Your message: Had awesome dinner! (4)
 }

@@ -35,8 +35,8 @@ func UpdateLog(userID, text string, timestamp time.Time, db DBInserter, twitterC
 	item := LogItem{
 		Timestamp:     timestamp,
 		UserID:        userID,
-		Measure:       measure,
-		Notes:         notes,
+		Measure:       *measure,
+		Notes:         *notes,
 		TwitterClient: twitterClient,
 	}
 
@@ -53,16 +53,16 @@ func UpdateLog(userID, text string, timestamp time.Time, db DBInserter, twitterC
 }
 
 // ParseMessage extracts the barometer measure and notes from a given text.
-func ParseMessage(s string) (int, string, error) {
+func ParseMessage(s string) (*int, *string, error) {
 	list := strings.Fields(s)
 	m := list[0]
 	notes := strings.Join(list[1:], " ")
 	measure, err := strconv.Atoi(m)
 	if err != nil {
 		log.WithFields(log.Fields{"err": err}).Error("strconv")
-		return 0, "", err
+		return nil, nil, err
 	}
-	return measure, notes, nil
+	return &measure, &notes, nil
 }
 
 // LogItem is the user log for the barometer. This also serves as
