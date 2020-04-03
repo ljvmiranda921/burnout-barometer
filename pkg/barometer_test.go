@@ -68,6 +68,9 @@ func TestParseMessage(t *testing.T) {
 		{name: "multiple notes", arg: "4 hello world", want: 4, want1: "hello world", wantErr: false},
 		{name: "no notes", arg: "4", want: 4, want1: "", wantErr: false},
 		{name: "cannot convert measure", arg: "X hello world", wantErr: true},
+		{name: "float measure", arg: "2.0 hello world", wantErr: true},
+		{name: "log measure outside range 1", arg: "100 hello world", wantErr: true},
+		{name: "log measure outside range 2", arg: "-100 hello world", wantErr: true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
