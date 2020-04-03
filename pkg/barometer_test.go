@@ -53,6 +53,7 @@ func TestUpdateLog(t *testing.T) {
 			}
 			if (got != nil) && (got.Text != tt.want.Text) {
 				t.Errorf("UpdateLog() = %v, want %v", got.Text, tt.want.Text)
+				return
 			}
 		})
 	}
@@ -81,9 +82,11 @@ func TestParseMessage(t *testing.T) {
 			}
 			if (got != nil) && *got != tt.want {
 				t.Errorf("ParseMessage() got = %d, want %d", *got, tt.want)
+				return
 			}
 			if (got1 != nil) && *got1 != tt.want1 {
 				t.Errorf("ParseMessage() got1 = %s, want %s", *got1, tt.want1)
+				return
 			}
 		})
 	}

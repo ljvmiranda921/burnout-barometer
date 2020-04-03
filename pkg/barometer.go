@@ -62,6 +62,12 @@ func ParseMessage(s string) (*int, *string, error) {
 		log.WithFields(log.Fields{"err": err}).Error("strconv")
 		return nil, nil, err
 	}
+	// log measure should only be within the range [1, 5]
+	if measure < 1 || measure > 5 {
+		err := fmt.Errorf("measure should be within [1, 5] range")
+		log.WithFields(log.Fields{"err": err}).Error("ParseMessage")
+		return nil, nil, err
+	}
 	return &measure, &notes, nil
 }
 
@@ -91,7 +97,6 @@ func (i *LogItem) Insert(db DBInserter) error {
 		log.Errorf("error in inserting item: %v", err)
 		return err
 	}
-
 	return nil
 }
 
@@ -103,19 +108,16 @@ func (i *LogItem) Reply() (*Message, error) {
 	} else {
 		text = defaultMessage
 	}
-
 	attach := Attachment{
 		Color: "#ef4631",
 		Title: "Here's your message from Burnout Barometer",
 		Text:  text,
 	}
-
 	msg := &Message{
 		ResponseType: "ephemeral",
 		Text:         fmt.Sprintf("%s: %d (%s)", ackPrefix, i.Measure, i.Notes),
 		Attachments:  []Attachment{attach},
 	}
-
 	return msg, nil
 }
 
@@ -127,12 +129,10 @@ func (i *LogItem) fetchTwitterMessage(screenName string, count int, userOnly boo
 		Count:          count,
 		ExcludeReplies: &userOnly,
 	})
-
 	if err != nil || resp.StatusCode != http.StatusOK {
 		log.Tracef("fetch unsuccessful: %v", err)
 		return defaultMessage
 	}
-
 	// Choose a random tweet from tinycarebot
 	rand.Seed(time.Now().Unix())
 	tweet := tweets[rand.Intn(len(tweets))]
